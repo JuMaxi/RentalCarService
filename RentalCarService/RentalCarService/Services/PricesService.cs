@@ -6,13 +6,11 @@ using System.Data;
 
 namespace RentalCarService.Services
 {
-    public class InsertPriceCategories : IInsertPriceCategories
+    public class PricesService : IPricesService
     {
-        ICategoriesService CheckCategories;
         IAccessDataBase AccessDataBase;
-        public InsertPriceCategories(ICategoriesService Categories, IAccessDataBase AccessDB)
+        public PricesService(IAccessDataBase AccessDB)
         {
-            CheckCategories = Categories;
             AccessDataBase = AccessDB;
         }
 
@@ -31,6 +29,16 @@ namespace RentalCarService.Services
             return 0;
         }
 
-        
+        public void RegistryPricesPerCategory(CategoriesPrices Prices)
+        {
+            int Id = CheckIdCategory(Prices.CodeCategory);
+            string Insert = "insert into PricesPerCategory (CategoryId, MinDays, MaxDays, Price) values (" + Id +
+                ",'" + Prices.MixDays + "','" + Prices.MaxDays + "'," + Prices.Price + ")";
+
+            AccessDataBase.AccessNonQuery(Insert);
+
+        }
+
+
     }
 }

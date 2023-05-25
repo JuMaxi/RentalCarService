@@ -1,6 +1,6 @@
 ﻿namespace RentalCarService.Interfaces
 {
-    public interface IInsertPriceCategories
+    public interface IPricesService
     {
     }
 }
