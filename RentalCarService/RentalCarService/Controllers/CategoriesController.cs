@@ -7,10 +7,10 @@ namespace RentalCarService.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
-    public class InsertCategoriesController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
-        IInsertCategories InsertCategories;
-        public InsertCategoriesController(IInsertCategories InsertC) 
+        ICategoriesService InsertCategories;
+        public CategoriesController(ICategoriesService InsertC) 
         { 
             InsertCategories= InsertC;
         }

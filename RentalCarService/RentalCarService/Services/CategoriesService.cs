@@ -6,16 +6,20 @@ using System.Data;
 
 namespace RentalCarService.Services
 {
-    public class InsertCategories : IInsertCategories
+    public class CategoriesService : ICategoriesService
     {
         IAccessDataBase AccessDB;
+        IValidateCategories ValidateCategories;
 
-        public InsertCategories(IAccessDataBase accessDB)
+        public CategoriesService(IAccessDataBase accessDB, IValidateCategories validateCategories)
         {
             AccessDB = accessDB;
+            ValidateCategories = validateCategories;
         }
         public void RegistryNewCategory(Categories NewCategory)
         {
+            ValidateCategories.ValidateCategory(NewCategory);
+
             string Insert = "insert into Categories (Code, Description) values ('" + NewCategory.Code + "','" + NewCategory.Description + "')";
 
             AccessDB.AccessNonQuery(Insert);

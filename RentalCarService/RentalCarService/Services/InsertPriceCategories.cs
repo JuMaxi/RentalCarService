@@ -8,9 +8,9 @@ namespace RentalCarService.Services
 {
     public class InsertPriceCategories : IInsertPriceCategories
     {
-        IInsertCategories CheckCategories;
+        ICategoriesService CheckCategories;
         IAccessDataBase AccessDataBase;
-        public InsertPriceCategories(IInsertCategories Categories, IAccessDataBase AccessDB)
+        public InsertPriceCategories(ICategoriesService Categories, IAccessDataBase AccessDB)
         {
             CheckCategories = Categories;
             AccessDataBase = AccessDB;

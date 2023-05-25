@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RentalCarService.Interfaces;
 using RentalCarService.Services;
+using RentalCarService.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,9 +29,10 @@ namespace RentalCarService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IInsertCategories, InsertCategories>();
+            services.AddTransient<ICategoriesService, CategoriesService>();
             services.AddTransient<IAccessDataBase, AccessDataBase>();
             services.AddTransient<IInsertPriceCategories, InsertPriceCategories>();
+            services.AddTransient<IValidateCategories, ValidateCategories>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
