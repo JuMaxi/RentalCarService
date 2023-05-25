@@ -30,6 +30,7 @@ namespace RentalCarService
         {
             services.AddTransient<IInsertCategories, InsertCategories>();
             services.AddTransient<IAccessDataBase, AccessDataBase>();
+            services.AddTransient<IInsertPriceCategories, InsertPriceCategories>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

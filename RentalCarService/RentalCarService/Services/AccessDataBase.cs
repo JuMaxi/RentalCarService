@@ -28,6 +28,7 @@ namespace RentalCarService.Services
         {
             SqlConnection Connection = new SqlConnection(ConnectionString);
             SqlCommand Command = new SqlCommand(Action, Connection);
+            Connection.Open ();
             SqlDataReader Reader = Command.ExecuteReader();
             return Reader;
         }
