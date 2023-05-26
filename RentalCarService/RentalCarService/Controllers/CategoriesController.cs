@@ -9,23 +9,29 @@ namespace RentalCarService.Controllers
     [Route("[Controller]")]
     public class CategoriesController : ControllerBase
     {
-        ICategoriesService InsertCategories;
+        ICategoriesService CategoriesService;
         public CategoriesController(ICategoriesService InsertC) 
         { 
-            InsertCategories= InsertC;
+            CategoriesService= InsertC;
         }
 
         [HttpPost]
         public void RegistryNewCategorie(Categories NewCategorie) 
         {
-            InsertCategories.RegistryNewCategory(NewCategorie);
+            CategoriesService.RegistryNewCategory(NewCategorie);
         }
 
         [HttpGet]
         public List<Categories> GetCategories()
         {
-            List<Categories> CategoriesCar = InsertCategories.ReadCategoriesFromDB();
+            List<Categories> CategoriesCar = CategoriesService.ReadCategoriesFromDB();
             return CategoriesCar;
+        }
+
+        [HttpDelete]
+        public void DeleteCategory([FromQuery] string Code)
+        {
+            CategoriesService.DeleteCategory(Code);
         }
 
     }

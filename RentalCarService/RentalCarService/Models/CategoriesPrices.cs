@@ -4,6 +4,7 @@ namespace RentalCarService.Models
 {
     public class CategoriesPrices
     {
+        public int Id { get; set; }
         public int CategorieId { get; set; }
         public string CodeCategory { get; set; }
         public string MinDays { get; set; }

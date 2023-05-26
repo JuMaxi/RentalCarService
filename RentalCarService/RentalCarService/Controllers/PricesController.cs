@@ -20,5 +20,24 @@ namespace RentalCarService.Controllers
         {
             PricesService.RegistryPricesPerCategory(Prices);
         }
+
+        [HttpPut]
+        public void UpdatePricesPerCategory(CategoriesPrices Prices)
+        {
+            PricesService.UpdatePricePerCategory(Prices);
+        }
+
+        [HttpDelete] 
+        public void DeletePricesPerCategory([FromQuery] string CodeCategory, int Id)
+        {
+            if(Id == 0)
+            {
+                PricesService.DeletePricePerCategoryFullCategory(CodeCategory);
+            }
+            else
+            {
+                PricesService.DeletePricePerCategoryId(Id);
+            }
+        }
     }
 }

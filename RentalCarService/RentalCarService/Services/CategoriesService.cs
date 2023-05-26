@@ -42,5 +42,12 @@ namespace RentalCarService.Services
             }
             return CategoriesCar;
         }
+
+        public void DeleteCategory(string Code)
+        {
+            string Delete = "delete from Categories where Code='" + Code + "'";
+
+            AccessDB.AccessNonQuery(Delete);
+        }
     }
 }
