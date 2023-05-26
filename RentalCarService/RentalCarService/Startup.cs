@@ -33,6 +33,7 @@ namespace RentalCarService
             services.AddTransient<IAccessDataBase, AccessDataBase>();
             services.AddTransient<IPricesService, PricesService>();
             services.AddTransient<IValidateCategories, ValidateCategories>();
+            services.AddTransient<IValidatePrices, ValidatePrices>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

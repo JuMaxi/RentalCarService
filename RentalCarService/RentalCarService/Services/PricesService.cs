@@ -9,9 +9,11 @@ namespace RentalCarService.Services
     public class PricesService : IPricesService
     {
         IAccessDataBase AccessDataBase;
-        public PricesService(IAccessDataBase AccessDB)
+        IValidatePrices ValidatePrices;
+        public PricesService(IAccessDataBase AccessDB, IValidatePrices Validate)
         {
             AccessDataBase = AccessDB;
+            ValidatePrices = Validate;
         }
 
         private int CheckIdCategory(string CodeCategory)
@@ -31,12 +33,13 @@ namespace RentalCarService.Services
 
         public void RegistryPricesPerCategory(CategoriesPrices Prices)
         {
+            ValidatePrices.ValidatePrice(Prices);
+
             int Id = CheckIdCategory(Prices.CodeCategory);
-            string Insert = "insert into PricesPerCategory (CategoryId, MinDays, MaxDays, Price) values (" + Id +
-                ",'" + Prices.MixDays + "','" + Prices.MaxDays + "'," + Prices.Price + ")";
+            string Insert = "insert into CategoryPrices (CategoryId, MinDays, MaxDays, Price) values (" + Id +
+                ",'" + Prices.MinDays + "','" + Prices.MaxDays + "'," + Prices.Price + ")";
 
             AccessDataBase.AccessNonQuery(Insert);
-
         }
 
 

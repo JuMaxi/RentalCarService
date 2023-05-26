@@ -6,8 +6,8 @@ namespace RentalCarService.Models
     {
         public int CategorieId { get; set; }
         public string CodeCategory { get; set; }
-        public string MixDays { get; set; }
+        public string MinDays { get; set; }
         public string MaxDays { get; set; } 
-        public int Price { get; set; }
+        public double Price { get; set; }
     }
 }
