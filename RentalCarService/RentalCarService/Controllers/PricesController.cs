@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
+using System.Collections.Generic;
 
 namespace RentalCarService.Controllers
 {
@@ -8,29 +9,29 @@ namespace RentalCarService.Controllers
     [Route("[Controller]")]
     public class PricesController : ControllerBase
     {
-        IPricesService PricesService;
+        IPriceBandsService PricesService;
 
-        public PricesController(IPricesService Pricesservice) 
-        { 
+        public PricesController(IPriceBandsService Pricesservice)
+        {
             PricesService = Pricesservice;
         }
 
         [HttpPost]
-        public void RegistryPricesPerCategory(CategoriesPrices Prices)
+        public void RegistryPricesPerCategory(Categories PriceBands)
         {
-            PricesService.RegistryPricesPerCategory(Prices);
+            PricesService.RegistryPricesPerCategory(PriceBands);
         }
 
         [HttpPut]
-        public void UpdatePricesPerCategory(CategoriesPrices Prices)
+        public void UpdatePricesPerCategory(Categories Prices)
         {
             PricesService.UpdatePricePerCategory(Prices);
         }
 
-        [HttpDelete] 
+        [HttpDelete]
         public void DeletePricesPerCategory([FromQuery] string CodeCategory, int Id)
         {
-            if(Id == 0)
+            if (Id == 0)
             {
                 PricesService.DeletePricePerCategoryFullCategory(CodeCategory);
             }
@@ -38,6 +39,13 @@ namespace RentalCarService.Controllers
             {
                 PricesService.DeletePricePerCategoryId(Id);
             }
+        }
+
+        [HttpGet]
+        public List<Categories> ReadPricesPerCategoryDB()
+        {
+            List<Categories> Prices = PricesService.ReadPriceBandsPerCategoryDB();
+            return Prices;
         }
     }
 }

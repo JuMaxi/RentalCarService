@@ -34,7 +34,7 @@ namespace RentalCarService.Services
 
             while (Reader.Read())
             {
-                Categories Categories = new Categories();
+                Categories Categories = new Categories(); // Class Instance = objeto
                 Categories.Id = Convert.ToInt32(Reader["Id"]);
                 Categories.Code = Reader["Code"].ToString();
                 Categories.Description = Reader["Description"].ToString();

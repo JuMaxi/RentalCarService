@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RentalCarService.Models
 {
@@ -8,6 +7,8 @@ namespace RentalCarService.Models
         public int Id { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
+
+        public List<PriceBands> PriceBands { get; set; }
 
     }
 }

@@ -1,19 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RentalCarService.Interfaces;
 using RentalCarService.Services;
 using RentalCarService.Validators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RentalCarService
 {
@@ -31,7 +24,7 @@ namespace RentalCarService
         {
             services.AddTransient<ICategoriesService, CategoriesService>();
             services.AddTransient<IAccessDataBase, AccessDataBase>();
-            services.AddTransient<IPricesService, PricesService>();
+            services.AddTransient<IPriceBandsService, PriceBandsService>();
             services.AddTransient<IValidateCategories, ValidateCategories>();
             services.AddTransient<IValidatePrices, ValidatePrices>();
             services.AddControllers();
