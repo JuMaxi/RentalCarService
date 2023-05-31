@@ -35,6 +35,7 @@ namespace RentalCarService.Services
         public void RegistryPricesPerCategory(Categories PriceBands)
         {
             ValidatePrices.ValidatePrice(PriceBands);
+            DeletePricePerCategoryFullCategory(PriceBands.Code);
 
             int Id = CheckIdCategory(PriceBands.Code);
             foreach (PriceBands Price in PriceBands.PriceBands)
