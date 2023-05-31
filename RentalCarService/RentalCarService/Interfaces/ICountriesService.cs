@@ -7,5 +7,7 @@ namespace RentalCarService.Interfaces
     {
         public void InsertNewCountry(Countries Countries);
         public List<Countries> ReadCountriesDB();
+        public void Deletecountry(int Id);
+        public void UpdateCountry(Countries Countries);
     }
 }

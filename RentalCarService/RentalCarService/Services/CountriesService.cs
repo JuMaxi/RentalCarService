@@ -43,5 +43,17 @@ namespace RentalCarService.Services
             }
             return Countries;
         }
+
+        public void Deletecountry(int Id)
+        {
+            string Delete = "Delete from Countries where Id=" + Id;
+            AccessDB.AccessNonQuery(Delete);
+        }
+
+        public void UpdateCountry(Countries Countries)
+        {
+            string Update = "Update Countries set Country='" + Countries.Country + "' where Id=" + Countries.Id;
+            AccessDB.AccessNonQuery(Update);
+        }
     }
 }
