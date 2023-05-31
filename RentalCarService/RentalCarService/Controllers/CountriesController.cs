@@ -20,5 +20,12 @@ namespace RentalCarService.Controllers
         {
             CountriesService.InsertNewCountry(Countries);
         }
+        [HttpGet]
+        public List<Countries> ReadCountriesDB()
+        {
+            List<Countries> Countries = CountriesService.ReadCountriesDB();
+
+            return Countries;
+        }
     }
 }

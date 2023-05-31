@@ -6,5 +6,6 @@ namespace RentalCarService.Interfaces
     public interface ICountriesService
     {
         public void InsertNewCountry(Countries Countries);
+        public List<Countries> ReadCountriesDB();
     }
 }
