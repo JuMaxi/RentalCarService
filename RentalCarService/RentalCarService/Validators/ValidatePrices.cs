@@ -1,6 +1,7 @@
 ﻿using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using System;
+using System.Linq;
 
 namespace RentalCarService.Validators
 {
@@ -13,36 +14,23 @@ namespace RentalCarService.Validators
             {
                 throw new Exception("The Code Category must be filled to continue.");
             }
-            else
-            {
-                ValidatePriceBands(Prices);
-            }
+            ValidatePriceBands(Prices);
         }
         private void ValidatePriceBands(Categories PriceBands)
         {
-            foreach (PriceBands Prices in PriceBands.PriceBands)
+            if (PriceBands.PriceBands.Any(price => price.MinDays == 0 || price.MinDays < 0))
             {
-                if (Prices.MinDays == 0
-                        || Prices.MinDays < 0)
-                {
-                    throw new Exception("The Min Days must be filled with value different than zero, null or empty");
-                }
-                else
-                {
-                    if (Prices.MaxDays == 0
-                    || Prices.MaxDays < 0)
-                    {
-                        throw new Exception("The Max Days must be filled with value different than zero, null or empty.");
-                    }
-                    else
-                    {
-                        if (Prices.Price == 0
-                            || Prices.Price < 0)
-                        {
-                            throw new Exception("The Price must be filled to continue and must be greater than zero");
-                        }
-                    }
-                }
+                throw new Exception("The Min Days must be filled with value different than zero, null or empty");
+            }
+
+            if (PriceBands.PriceBands.Any(price => price.MaxDays == 0 || price.MaxDays < 0))
+            {
+                throw new Exception("The Max Days must be filled with value different than zero, null or empty.");
+            }
+
+            if (PriceBands.PriceBands.Any(price => price.Price == 0 || price.Price < 0))
+            {
+                throw new Exception("The Price must be filled to continue and must be greater than zero");
             }
         }
     }

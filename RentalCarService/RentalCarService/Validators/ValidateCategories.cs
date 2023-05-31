@@ -8,31 +8,28 @@ namespace RentalCarService.Validators
     public class ValidateCategories : IValidateCategories
     {
         IAccessDataBase AccessDB;
-        public ValidateCategories(IAccessDataBase Acccess) 
-        { 
-            AccessDB= Acccess;
+        public ValidateCategories(IAccessDataBase Acccess)
+        {
+            AccessDB = Acccess;
         }
 
         public void ValidateCategory(Categories Category)
         {
-            if(Category.Code == null
+            if (Category.Code == null
                 || Category.Code.Length == 0)
             {
                 throw new Exception("The Code of de Car must be filled to continue.");
             }
-            else
-            {
-                ValidateUniqueCodeCategory(Category);
-                ValidateDescriptionCategory(Category);
-            }
+            ValidateUniqueCodeCategory(Category);
+            ValidateDescriptionCategory(Category);
         }
         private void ValidateUniqueCodeCategory(Categories Category)
         {
             string Select = "select * from Categories where Code='" + Category.Code + "'";
 
-            IDataReader Reader = AccessDB.AccessReader(Select); 
+            IDataReader Reader = AccessDB.AccessReader(Select);
 
-            while(Reader.Read())
+            while (Reader.Read())
             {
                 throw new Exception("The Code Category must be unique. Change the code to continue.");
             }
