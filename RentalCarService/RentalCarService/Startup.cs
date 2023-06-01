@@ -31,6 +31,8 @@ namespace RentalCarService
             services.AddTransient<IValidateCountries, ValidateCountries>();
             services.AddTransient<IBrandsService, BrandsService>();
             services.AddTransient<IValidateBrands, ValidateBrands>();
+            services.AddTransient<IBranchsService, BranchsService>();
+            services.AddTransient<IValidateBranchs, ValidateBranchs>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
