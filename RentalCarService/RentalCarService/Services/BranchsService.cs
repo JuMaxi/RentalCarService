@@ -1,6 +1,7 @@
 ﻿using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace RentalCarService.Services
@@ -8,13 +9,17 @@ namespace RentalCarService.Services
     public class BranchsService : IBranchsService
     {
         IAccessDataBase AccessDB;
-        public BranchsService(IAccessDataBase Acccess)
+        IValidateBranchs ValidateBranchs;
+        public BranchsService(IAccessDataBase Acccess, IValidateBranchs validateBranchs)
         {
             AccessDB = Acccess;
+            ValidateBranchs = validateBranchs;
         }
 
         public void InsertNewBranch(Branchs Branch)
         {
+            ValidateBranchs.ValidateBranch(Branch);
+
             string Insert = "insert into Branchs (Name, Phone, CountryId, Address) values ('" +
                 Branch.Name + "','" + Branch.Phone + "', " + Branch.CountryId + ",'" + Branch.Address + "')";
 
@@ -45,6 +50,28 @@ namespace RentalCarService.Services
 
             AccessDB.AccessNonQuery(Insert);
 
+        }
+
+        public List<Branchs> ReadBranchsFromDB()
+        {
+            List<Branchs> ListBranchs = new List<Branchs>();
+
+            string Select = "select Branchs.Id, Branchs.Name, Branchs.Phone, Branchs.CountryId, Branchs.Address, " +
+                "Countries.Country, " +
+                "OpeningHours.BranchId, OpeningHours.MondayToFriday, OpeningHours.Saturday, OpeningHours.Sunday " +
+                "from Branchs " +
+                "Inner Join Countries ON Branchs.CountryId = Countries.Id " +
+                "Inner Join OpeningHours On Branchs.Id = OpeningHours.BranchId";
+
+            IDataReader Reader = AccessDB.AccessReader(Select);
+
+            while (Reader.Read())
+            {
+                Branchs Branch = new Branchs();
+                Branch.Id = Convert.ToInt32(Reader["Id"]);
+            }
+
+            return ListBranchs;
         }
     }
 }
