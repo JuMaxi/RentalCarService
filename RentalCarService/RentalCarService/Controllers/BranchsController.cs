@@ -33,5 +33,11 @@ namespace RentalCarService.Controllers
         {
             BranchsService.DeleteBranchs(Id);
         }
+
+        [HttpPut]
+        public void UpdateBranch(Branchs Branch)
+        {
+            BranchsService.UpdateBranch(Branch);
+        }
     }
 }

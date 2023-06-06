@@ -129,5 +129,25 @@ namespace RentalCarService.Services
 
             AccessDB.AccessNonQuery(Delete);
         }
+
+        private void UpdateOpeningHours(List<OpeningHours> OpeningHours)
+        {
+            foreach(OpeningHours Hours in OpeningHours)
+            {
+                string Update = "Update OpeningHours set Opens='" + Hours.Opens + "', Closes='" + Hours.Closes + "', DayOfWeek='" +
+                    Hours.DayOfWeek + "' where Id=" + Hours.Id;
+
+                AccessDB.AccessNonQuery(Update);
+            }
+        }
+        public void UpdateBranch(Branchs Branch) 
+        {
+            UpdateOpeningHours(Branch.OpeningHours);
+
+            string Update = "Update Branchs set Name='" + Branch.Name + "', Phone='" + Branch.Phone + "', CountryId=" + Branch.CountryId +
+                ", Address='" + Branch.Address + "' where Id=" + Branch.Id;
+
+            AccessDB.AccessNonQuery(Update);
+        }
     }
 }
