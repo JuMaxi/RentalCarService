@@ -13,7 +13,7 @@ namespace RentalCarService
 
         public TimeOnlyConverter(string? serializationFormat)
         {
-            this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
+            this.serializationFormat = serializationFormat ?? "HH:mm:ss";
         }
 
         public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

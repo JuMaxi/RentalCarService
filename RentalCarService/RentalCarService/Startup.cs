@@ -33,7 +33,11 @@ namespace RentalCarService
             services.AddTransient<IValidateBrands, ValidateBrands>();
             services.AddTransient<IBranchsService, BranchsService>();
             services.AddTransient<IValidateBranchs, ValidateBranchs>();
-            services.AddControllers().AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter()));
+            services.AddControllers().AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
+                opt.JsonSerializerOptions.Converters.Add(new DayOfWeekConverter());
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RentalCarService", Version = "v1" });

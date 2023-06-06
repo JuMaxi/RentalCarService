@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
+using System.Collections.Generic;
 
 namespace RentalCarService.Controllers
 {
@@ -18,6 +19,13 @@ namespace RentalCarService.Controllers
         public void InsertNewBranch(Branchs Branch)
         {
             BranchsService.InsertNewBranch(Branch);
+        }
+
+        [HttpGet]
+        public List<Branchs> ReadBranchsFromDB()
+        {
+            List<Branchs> ListBranchs = BranchsService.ReadBranchsFromDB();
+            return ListBranchs;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace RentalCarService.Services
         }
 
         public void InsertNewBranch(Branchs Branch)
-            {
+        {
             ValidateBranchs.ValidateBranch(Branch);
 
             string Insert = "insert into Branchs (Name, Phone, CountryId, Address) values ('" +
@@ -67,14 +67,52 @@ namespace RentalCarService.Services
                 "Inner Join OpeningHours On Branchs.Id = OpeningHours.BranchId";
 
             IDataReader Reader = AccessDB.AccessReader(Select);
+            int Id = 0;
 
             while (Reader.Read())
             {
-                Branchs Branch = new Branchs();
-                Branch.Id = Convert.ToInt32(Reader["Id"]);
+                if (Id != Convert.ToInt32(Reader["Id"]))
+                {
+                    Branchs Branch = new Branchs();
+                    Branch.Id = Convert.ToInt32(Reader["Id"]);
+                    Branch.Name = Reader["Name"].ToString();
+                    Branch.Phone = Reader["Phone"].ToString();
+                    Branch.Address = Reader["Address"].ToString();
+                    Branch.CountryId = Convert.ToInt32(Reader["CountryId"]);
+
+                    Countries Country = new Countries();
+                    Country.Country = Reader["Country"].ToString();
+
+                    OpeningHours Hours = new OpeningHours();
+                    Hours.DayOfWeek = ConvertStringToDayOfWeek((Reader["DayOfWeek"]).ToString());
+                    Hours.Opens = TimeOnly.Parse(Reader["Opens"].ToString());
+                    Hours.Closes = TimeOnly.Parse(Reader["Closes"].ToString());
+
+                    List<OpeningHours> ListHours = new List<OpeningHours>();
+                    ListHours.Add(Hours);
+                    Branch.OpeningHours = ListHours;
+
+                    ListBranchs.Add(Branch);
+
+                    Id = Branch.Id;
+                }
+                else
+                {
+                    OpeningHours Hours = new OpeningHours();
+                    Hours.DayOfWeek = ConvertStringToDayOfWeek((Reader["DayOfWeek"]).ToString());
+                    Hours.Opens = TimeOnly.Parse(Reader["Opens"].ToString());
+                    Hours.Closes = TimeOnly.Parse(Reader["Closes"].ToString());
+
+                    ListBranchs[ListBranchs.Count - 1].OpeningHours.Add(Hours);
+                }
             }
 
             return ListBranchs;
+        }
+
+        private DayOfWeek ConvertStringToDayOfWeek(string day)
+        {
+            return (DayOfWeek)Enum.Parse(typeof(DayOfWeek), day);
         }
     }
 }
