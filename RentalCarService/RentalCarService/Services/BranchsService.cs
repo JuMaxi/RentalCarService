@@ -17,7 +17,7 @@ namespace RentalCarService.Services
         }
 
         public void InsertNewBranch(Branchs Branch)
-        {
+            {
             ValidateBranchs.ValidateBranch(Branch);
 
             string Insert = "insert into Branchs (Name, Phone, CountryId, Address) values ('" +
@@ -41,15 +41,18 @@ namespace RentalCarService.Services
             }
             return Id;
         }
-        private void InsertOpeningHours(OpeningHours Hours)
+        private void InsertOpeningHours(List<OpeningHours> OpeningHours)
         {
             int BranchId = ReturnLastIdBranch();
 
-            string Insert = "insert into OpeningHours (BranchId, MondayToFriday, Saturday, Sunday) values (" +
-                BranchId + ",'" + Hours.MondayToFriday + "','" + Hours.Saturday + "','" + Hours.Sunday + "')";
+            foreach (OpeningHours Hour in OpeningHours)
+            {
+                string Insert = "insert into OpeningHours (BranchId, DayOfWeek, Opens, Closes) values (" +
+                BranchId + ",'" + Hour.DayOfWeek + "','" + Hour.Opens + "','" + Hour.Closes + "')";
 
-            AccessDB.AccessNonQuery(Insert);
+                AccessDB.AccessNonQuery(Insert);
 
+            }
         }
 
         public List<Branchs> ReadBranchsFromDB()
@@ -58,7 +61,7 @@ namespace RentalCarService.Services
 
             string Select = "select Branchs.Id, Branchs.Name, Branchs.Phone, Branchs.CountryId, Branchs.Address, " +
                 "Countries.Country, " +
-                "OpeningHours.BranchId, OpeningHours.MondayToFriday, OpeningHours.Saturday, OpeningHours.Sunday " +
+                "OpeningHours.BranchId, OpeningHours.DayOfWeek, OpeningHours.Opens, OpeningHours.Closes " +
                 "from Branchs " +
                 "Inner Join Countries ON Branchs.CountryId = Countries.Id " +
                 "Inner Join OpeningHours On Branchs.Id = OpeningHours.BranchId";

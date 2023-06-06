@@ -9,6 +9,6 @@ namespace RentalCarService.Models
         public string Phone { get; set; }
         public int CountryId { get; set; }
         public string Address { get; set; }
-        public OpeningHours OpeningHours { get; set; }
+        public List<OpeningHours> OpeningHours { get; set; }
     }
 }
