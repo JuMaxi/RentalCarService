@@ -7,5 +7,6 @@ namespace RentalCarService.Interfaces
     {
         public void InsertNewBranch(Branchs Branch);
         public List<Branchs> ReadBranchsFromDB();
+        public void DeleteBranchs(int Id);
     }
 }

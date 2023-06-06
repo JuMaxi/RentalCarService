@@ -114,5 +114,20 @@ namespace RentalCarService.Services
         {
             return (DayOfWeek)Enum.Parse(typeof(DayOfWeek), day);
         }
+
+        private void DeleteOpeningHours(int Id)
+        {
+            string Delete = "Delete from OpeningHours where BranchId=" + Id;
+
+            AccessDB.AccessNonQuery(Delete);
+        }
+        public void DeleteBranchs(int Id)
+        {
+            DeleteOpeningHours(Id);
+
+            string Delete = "delete from Branchs where Id=" + Id;
+
+            AccessDB.AccessNonQuery(Delete);
+        }
     }
 }

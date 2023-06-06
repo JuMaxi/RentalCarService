@@ -27,5 +27,11 @@ namespace RentalCarService.Controllers
             List<Branchs> ListBranchs = BranchsService.ReadBranchsFromDB();
             return ListBranchs;
         }
+
+        [HttpDelete]
+        public void DeleteBranch([FromQuery] int Id)
+        {
+            BranchsService.DeleteBranchs(Id);
+        }
     }
 }
