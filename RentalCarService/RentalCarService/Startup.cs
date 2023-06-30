@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -42,6 +43,9 @@ namespace RentalCarService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RentalCarService", Version = "v1" });
             });
+
+            string connectionString = Configuration.GetValue<string>("ConnectionStringDBContext");
+            services.AddDbContext<RentalCarsDBContext>(DB => DB.UseSqlServer(connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
