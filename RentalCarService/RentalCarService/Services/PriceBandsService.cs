@@ -3,7 +3,7 @@ using RentalCarService.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Threading;
+using System.Linq;
 
 namespace RentalCarService.Services
 {
@@ -11,10 +11,12 @@ namespace RentalCarService.Services
     {
         IAccessDataBase AccessDataBase;
         IValidatePrices ValidatePrices;
-        public PriceBandsService(IAccessDataBase AccessDB, IValidatePrices Validate)
+        private readonly RentalCarsDBContext _dbContext;
+        public PriceBandsService(IAccessDataBase AccessDB, IValidatePrices Validate, RentalCarsDBContext dbContext)
         {
             AccessDataBase = AccessDB;
             ValidatePrices = Validate;
+            _dbContext = dbContext;
         }
 
         private int CheckIdCategory(string CodeCategory)

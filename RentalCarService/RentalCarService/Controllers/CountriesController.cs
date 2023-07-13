@@ -32,7 +32,7 @@ namespace RentalCarService.Controllers
         [HttpDelete]
         public void DeleteCountry([FromQuery] int Id)
         {
-            CountriesService.Deletecountry(Id);
+            CountriesService.DeleteCountry(Id);
         }
 
         [HttpPut]
