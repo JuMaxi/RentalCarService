@@ -1,21 +1,23 @@
-﻿using RentalCarService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using System;
 using System.Data;
+using System.Linq;
 
 namespace RentalCarService.Validators
 {
     public class ValidateBrands : IValidateBrands
     {
-        IAccessDataBase AccessDB;
-        public ValidateBrands(IAccessDataBase Access)
+        private readonly RentalCarsDBContext _dbContext;
+        public ValidateBrands(RentalCarsDBContext dBContext)
         {
-            AccessDB = Access;
+            _dbContext = dBContext;
         }
 
         public void ValidateBrandName(Brands Brand)
         {
-            if(Brand.Brand == null || Brand.Brand.Length == 0)
+            if (Brand.Brand == null || Brand.Brand.Length == 0)
             {
                 throw new Exception("The Brand must be filled and can't be null. Fill the field to continue.");
             }
@@ -23,11 +25,9 @@ namespace RentalCarService.Validators
         }
         private void ValidateRepeatedBrandName(Brands Brand)
         {
-            string Select = "select * from Brands where Brand='" + Brand.Brand + "'";
+            Brands brandsFromDatabase = _dbContext.Brands.Where(b => b.Brand.Equals(Brand.Brand)).FirstOrDefault();
 
-            IDataReader Reader = AccessDB.AccessReader(Select);
-
-            while (Reader.Read())
+            if (brandsFromDatabase != null)
             {
                 throw new Exception("The Brand " + Brand.Brand + " already exist in this DataBase, insert a different Brand to continue.");
             }

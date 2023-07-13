@@ -1,59 +1,46 @@
 ﻿using RentalCarService.Interfaces;
 using RentalCarService.Models;
-using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 
 namespace RentalCarService.Services
 {
     public class CountriesService : ICountriesService
     {
-        IAccessDataBase AccessDB;
         IValidateCountries ValidateCountries;
+        private readonly RentalCarsDBContext _dbContext;
 
-        public CountriesService(IAccessDataBase accessDB, IValidateCountries validateCountries)
+        public CountriesService(IValidateCountries validateCountries, RentalCarsDBContext dbContext)
         {
-            AccessDB = accessDB;
             ValidateCountries = validateCountries;
+            _dbContext = dbContext;
         }
 
         public void InsertNewCountry(Countries Countries)
         {
             ValidateCountries.ValidateNameCountry(Countries.Country);
-
-            string Insert = "insert into Countries (Country) values ('" + Countries.Country + "')";
-
-            AccessDB.AccessNonQuery(Insert);
+            _dbContext.Countries.Add(Countries);
+            _dbContext.SaveChanges();
         }
 
         public List<Countries> ReadCountriesDB()
         {
-            List<Countries> Countries = new List<Countries>();
-            string Select = "select * from Countries";
-            IDataReader Reader = AccessDB.AccessReader(Select);
-
-            while(Reader.Read())
-            {
-                Countries Country = new Countries();
-                Country.Id = Convert.ToInt32(Reader["Id"]);
-                Country.Country = Reader["Country"].ToString();
-
-                Countries.Add(Country);
-            }
-            return Countries;
+            var allCountries = _dbContext.Countries.ToList();
+            return allCountries;
         }
 
-        public void Deletecountry(int Id)
+        public void DeleteCountry(int Id)
         {
-            string Delete = "Delete from Countries where Id=" + Id;
-            AccessDB.AccessNonQuery(Delete);
+            Countries toRemove = _dbContext.Countries.Find(Id);
+            _dbContext.Remove(toRemove);
+            _dbContext.SaveChanges();
         }
 
         public void UpdateCountry(Countries Countries)
         {
-            string Update = "Update Countries set Country='" + Countries.Country + "' where Id=" + Countries.Id;
-            AccessDB.AccessNonQuery(Update);
+            Countries toUpdate = _dbContext.Countries.Find(Countries.Id);
+            toUpdate.Country = Countries.Country;
+            _dbContext.SaveChanges();
         }
     }
 }

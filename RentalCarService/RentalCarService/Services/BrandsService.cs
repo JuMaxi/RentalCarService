@@ -1,56 +1,43 @@
 ﻿using RentalCarService.Interfaces;
 using RentalCarService.Models;
-using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 
 namespace RentalCarService.Services
 {
     public class BrandsService : IBrandsService
     {
-        IAccessDataBase AccessDB;
         IValidateBrands ValidateBrands;
-        public BrandsService(IAccessDataBase accessDB, IValidateBrands validateBrands)
+        private readonly RentalCarsDBContext _dbContext;
+        public BrandsService(IValidateBrands validateBrands, RentalCarsDBContext dbContext)
         {
-            AccessDB = accessDB;
             ValidateBrands = validateBrands;
+            _dbContext = dbContext;
         }
         public void InserNewBrand(Brands Brand) 
         {
             ValidateBrands.ValidateBrandName(Brand);
-
-            string Insert = "Insert into Brands (Brand) values ('" + Brand.Brand + "')";
-
-            AccessDB.AccessNonQuery(Insert);
+            _dbContext.Brands.Add(Brand);
+            _dbContext.SaveChanges();
         }
 
-        public List<Brands> ReadBrandsFromDB()
+        public List<Brands> ReadBrandsFromDB()  
         {
-            List<Brands> BrandsList = new List<Brands>();
-            string Select = "Select * from Brands";
-            
-            IDataReader Reader = AccessDB.AccessReader(Select);
-
-            while(Reader.Read())
-            {
-                Brands Brand = new Brands();
-                Brand.Id = Convert.ToInt32(Reader["Id"]);
-                Brand.Brand = Reader["Brand"].ToString();
-
-                BrandsList.Add(Brand);
-            }
-            return BrandsList;
+            var allBrands = _dbContext.Brands.ToList();
+            return allBrands;
         }
         public void DeleteBrand(int Id)
         {
-            string Delete = "delete from Brands where Id=" + Id;
-            AccessDB.AccessNonQuery(Delete);
+            Brands toRemove = _dbContext.Brands.Find(Id);
+            _dbContext.Remove(toRemove);
+            _dbContext.SaveChanges();
         }
 
         public void UpdateBrand(Brands Brand)
         {
-            string Update = "Update Brands set Brand='" + Brand.Brand + "' where Id=" + Brand.Id;
-            AccessDB.AccessNonQuery(Update);
+            Brands toUpdate = _dbContext.Brands.Find(Brand.Id);
+            toUpdate.Brand = Brand.Brand;
+            _dbContext.SaveChanges();
         }
     }
 }
