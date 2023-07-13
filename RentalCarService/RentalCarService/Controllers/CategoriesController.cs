@@ -29,10 +29,9 @@ namespace RentalCarService.Controllers
         }
 
         [HttpDelete]
-        public void DeleteCategory([FromQuery] string Code)
+        public void DeleteCategory([FromQuery] int Id)
         {
-            CategoriesService.DeleteCategory(Code);
+            CategoriesService.DeleteCategory(Id);
         }
-
     }
 }

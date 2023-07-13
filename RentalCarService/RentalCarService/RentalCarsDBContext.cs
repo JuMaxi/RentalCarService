@@ -12,6 +12,7 @@ namespace RentalCarService
         public DbSet<Countries> Countries { get; set; }
         public DbSet<Brands> Brands { get; set; }
 
+        public DbSet<Categories> Categories { get; set; }
       
     }
 }

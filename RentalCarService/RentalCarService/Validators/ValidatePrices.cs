@@ -7,31 +7,6 @@ namespace RentalCarService.Validators
 {
     public class ValidatePrices : IValidatePrices
     {
-        public void ValidatePrice(Categories Prices)
-        {
-            if (Prices.Code == null
-                || Prices.Code.Length == 0)
-            {
-                throw new Exception("The Code Category must be filled to continue.");
-            }
-            ValidatePriceBands(Prices);
-        }
-        private void ValidatePriceBands(Categories PriceBands)
-        {
-            if (PriceBands.PriceBands.Any(price => price.MinDays == 0 || price.MinDays < 0))
-            {
-                throw new Exception("The Min Days must be filled with value different than zero, null or empty");
-            }
-
-            if (PriceBands.PriceBands.Any(price => price.MaxDays == 0 || price.MaxDays < 0))
-            {
-                throw new Exception("The Max Days must be filled with value different than zero, null or empty.");
-            }
-
-            if (PriceBands.PriceBands.Any(price => price.Price == 0 || price.Price < 0))
-            {
-                throw new Exception("The Price must be filled to continue and must be greater than zero");
-            }
-        }
+        
     }
 }

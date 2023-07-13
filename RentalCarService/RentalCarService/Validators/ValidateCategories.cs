@@ -2,15 +2,16 @@
 using RentalCarService.Models;
 using System;
 using System.Data;
+using System.Linq;
 
 namespace RentalCarService.Validators
 {
     public class ValidateCategories : IValidateCategories
     {
-        IAccessDataBase AccessDB;
-        public ValidateCategories(IAccessDataBase Acccess)
+        private readonly RentalCarsDBContext _dbContext;
+        public ValidateCategories(RentalCarsDBContext dbContext)
         {
-            AccessDB = Acccess;
+            _dbContext = dbContext;
         }
 
         public void ValidateCategory(Categories Category)
@@ -22,14 +23,13 @@ namespace RentalCarService.Validators
             }
             ValidateUniqueCodeCategory(Category);
             ValidateDescriptionCategory(Category);
+            ValidatePriceBands(Category);
         }
         private void ValidateUniqueCodeCategory(Categories Category)
         {
-            string Select = "select * from Categories where Code='" + Category.Code + "'";
+            Categories categoriefromDataBase = _dbContext.Categories.Where(c => c.Code == Category.Code).FirstOrDefault();
 
-            IDataReader Reader = AccessDB.AccessReader(Select);
-
-            while (Reader.Read())
+            if(categoriefromDataBase != null)
             {
                 throw new Exception("The Code Category must be unique. Change the code to continue.");
             }
@@ -40,6 +40,24 @@ namespace RentalCarService.Validators
                     || Category.Description.Length == 0)
             {
                 throw new Exception("The Description of the car must be filled to continue.");
+            }
+        }
+
+        private void ValidatePriceBands(Categories PriceBands)
+        {
+            if (PriceBands.PriceBands.Any(price => price.MinDays == 0 || price.MinDays < 0))
+            {
+                throw new Exception("The Min Days must be filled with value different than zero, null or empty");
+            }
+
+            if (PriceBands.PriceBands.Any(price => price.MaxDays == 0 || price.MaxDays < 0))
+            {
+                throw new Exception("The Max Days must be filled with value different than zero, null or empty.");
+            }
+
+            if (PriceBands.PriceBands.Any(price => price.Price == 0 || price.Price < 0))
+            {
+                throw new Exception("The Price must be filled to continue and must be greater than zero");
             }
         }
     }
