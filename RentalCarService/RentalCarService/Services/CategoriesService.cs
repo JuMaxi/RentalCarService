@@ -1,53 +1,46 @@
-﻿using RentalCarService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+
 
 namespace RentalCarService.Services
 {
     public class CategoriesService : ICategoriesService
     {
-        IAccessDataBase AccessDB;
         IValidateCategories ValidateCategories;
+        private readonly RentalCarsDBContext _dbContext;
 
-        public CategoriesService(IAccessDataBase accessDB, IValidateCategories validateCategories)
+        public CategoriesService(IValidateCategories validateCategories, RentalCarsDBContext dbContext)
         {
-            AccessDB = accessDB;
             ValidateCategories = validateCategories;
+            _dbContext = dbContext;
         }
         public void RegistryNewCategory(Categories NewCategory)
         {
             ValidateCategories.ValidateCategory(NewCategory);
-
-            string Insert = "insert into Categories (Code, Description) values ('" + NewCategory.Code + "','" + NewCategory.Description + "')";
-
-            AccessDB.AccessNonQuery(Insert);
+            _dbContext.Categories.Add(NewCategory);
+            _dbContext.SaveChanges();
         }
 
         public List<Categories> ReadCategoriesFromDB()
         {
-            string Select = "select * from Categories";
-            List<Categories> CategoriesCar = new List<Categories>();
-
-            IDataReader Reader = AccessDB.AccessReader(Select);
-
-            while (Reader.Read())
-            {
-                Categories Categories = new Categories(); // Class Instance = objeto
-                Categories.Id = Convert.ToInt32(Reader["Id"]);
-                Categories.Code = Reader["Code"].ToString();
-                Categories.Description = Reader["Description"].ToString();
-                CategoriesCar.Add(Categories);
-            }
-            return CategoriesCar;
+            var allCategories = _dbContext.Categories.Include(c => c.PriceBands).ToList();
+            return allCategories;
         }
 
-        public void DeleteCategory(string Code)
+        public void DeleteCategory(int Id)
         {
-            string Delete = "delete from Categories where Code='" + Code + "'";
+            Categories toRemove = _dbContext.Categories.Include(P => P.PriceBands).Where(c => c.Id == Id).FirstOrDefault();
 
-            AccessDB.AccessNonQuery(Delete);
+            foreach (var priceband in toRemove.PriceBands)
+                _dbContext.Remove(priceband);
+
+            _dbContext.Remove(toRemove);
+            _dbContext.SaveChanges();
         }
     }
 }

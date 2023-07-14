@@ -25,9 +25,7 @@ namespace RentalCarService
         {
             services.AddTransient<ICategoriesService, CategoriesService>();
             services.AddTransient<IAccessDataBase, AccessDataBase>();
-            services.AddTransient<IPriceBandsService, PriceBandsService>();
             services.AddTransient<IValidateCategories, ValidateCategories>();
-            services.AddTransient<IValidatePrices, ValidatePrices>();
             services.AddTransient<ICountriesService, CountriesService>();
             services.AddTransient<IValidateCountries, ValidateCountries>();
             services.AddTransient<IBrandsService, BrandsService>();

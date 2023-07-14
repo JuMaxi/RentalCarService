@@ -6,5 +6,6 @@
         public int MinDays { get; set; }
         public int MaxDays { get; set; } 
         public double Price { get; set; }
+
     }
 }

@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\PricesController.cs" />
+    <Compile Remove="Interfaces\IPriceBandsService.cs" />
+    <Compile Remove="Interfaces\IValidatePrices.cs" />
+    <Compile Remove="Services\PriceBandsService.cs" />
+    <Compile Remove="Validators\ValidatePrices.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.19">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
