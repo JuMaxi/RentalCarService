@@ -1,12 +1,10 @@
 ﻿using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace RentalCarService.Validators
 {
-    public class ValidateBranchs : IValidateBranchs
+    public class ValidateBranches : IValidateBranchs
     {
         public void ValidateBranch(Branchs Branch)
         {
