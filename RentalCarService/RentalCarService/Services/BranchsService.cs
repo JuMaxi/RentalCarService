@@ -10,10 +10,12 @@ namespace RentalCarService.Services
     {
         IAccessDataBase AccessDB;
         IValidateBranchs ValidateBranchs;
-        public BranchsService(IAccessDataBase Acccess, IValidateBranchs validateBranchs)
+        private readonly RentalCarsDBContext _dbContext;
+        public BranchsService(IAccessDataBase Acccess, IValidateBranchs validateBranchs, RentalCarsDBContext dbContext)
         {
             AccessDB = Acccess;
             ValidateBranchs = validateBranchs;
+            _dbContext = dbContext;
         }
 
         public void InsertNewBranch(Branchs Branch)
