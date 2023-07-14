@@ -45,20 +45,24 @@ namespace RentalCarService.Validators
 
         private void ValidatePriceBands(Categories PriceBands)
         {
-            if (PriceBands.PriceBands.Any(price => price.MinDays == 0 || price.MinDays < 0))
+            foreach(PriceBands Price in PriceBands.PriceBands) 
             {
-                throw new Exception("The Min Days must be filled with value different than zero, null or empty");
-            }
+                if (Price.MinDays == 0 ||Price.MinDays < 0)
+                {
+                    throw new Exception("The Min Days must be filled with value different than zero, null or empty");
+                }
 
-            if (PriceBands.PriceBands.Any(price => price.MaxDays == 0 || price.MaxDays < 0))
-            {
-                throw new Exception("The Max Days must be filled with value different than zero, null or empty.");
-            }
+                if (Price.MaxDays == 0 || Price.MaxDays < 0)
+                {
+                    throw new Exception("The Max Days must be filled with value different than zero, null or empty.");
+                }
 
-            if (PriceBands.PriceBands.Any(price => price.Price == 0 || price.Price < 0))
-            {
-                throw new Exception("The Price must be filled to continue and must be greater than zero");
+                if (Price.Price == 0 || Price.Price < 0)
+                {
+                    throw new Exception("The Price must be filled to continue and must be greater than zero");
+                }
             }
+            
         }
     }
 }
