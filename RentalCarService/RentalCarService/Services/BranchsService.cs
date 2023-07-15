@@ -21,19 +21,21 @@ namespace RentalCarService.Services
         public void InsertNewBranch(Branchs Branch)
         {
             ValidateBranchs.ValidateBranch(Branch);
+            Branch.Country = FindCountryIdDB(Branch.Country.Id);
+
             _dbContext.Branches.Add(Branch);
             _dbContext.SaveChanges();
+        }
+        private Countries FindCountryIdDB(int Id)
+        {
+            Countries Country = _dbContext.Countries.Where(I => I.Id == Id).FirstOrDefault();
+            return Country;
         }
 
         public List<Branchs> ReadBranchesFromDB()
         {
             var allBranches = _dbContext.Branches.Include(b => b.OpeningHours).ToList();
             return allBranches;
-        }
-
-        private DayOfWeek ConvertStringToDayOfWeek(string day)
-        {
-            return (DayOfWeek)Enum.Parse(typeof(DayOfWeek), day);
         }
 
         public void DeleteBranch(int Id)

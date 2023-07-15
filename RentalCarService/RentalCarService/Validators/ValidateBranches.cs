@@ -16,7 +16,7 @@ namespace RentalCarService.Validators
             {
                 throw new Exception("The field Phone must be filled to continue and can't be null.");
             }
-            if(Branch.CountryId == 0)
+            if(Branch.Country.Id == 0)
             {
                 throw new Exception("The field CountryId must be filled with a valid Country Id to continue");
             }
