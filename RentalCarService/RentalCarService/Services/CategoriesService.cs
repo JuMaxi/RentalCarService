@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -32,14 +31,32 @@ namespace RentalCarService.Services
             return allCategories;
         }
 
-        public void DeleteCategory(int Id)
+        private Categories FindPriceBandsDB(int CategoryId)
         {
-            Categories toRemove = _dbContext.Categories.Include(P => P.PriceBands).Where(c => c.Id == Id).FirstOrDefault();
+            Categories Categorie = _dbContext.Categories.Include(P => P.PriceBands).Where(c => c.Id == CategoryId).FirstOrDefault();
 
-            foreach (var priceband in toRemove.PriceBands)
+            foreach (var priceband in Categorie.PriceBands)
                 _dbContext.Remove(priceband);
 
+            return Categorie;
+        }
+        public void DeleteCategory(int Id)
+        {
+            Categories toRemove = FindPriceBandsDB(Id);
+
             _dbContext.Remove(toRemove);
+            _dbContext.SaveChanges();
+        }
+
+        public void UpdateCategory(Categories Category)
+        {
+            ValidateCategories.ValidateCategory(Category);
+
+            Categories toUpdate = FindPriceBandsDB(Category.Id);
+
+            toUpdate.Code = Category.Code;
+            toUpdate.Description = Category.Description;
+            toUpdate.PriceBands = Category.PriceBands;
             _dbContext.SaveChanges();
         }
     }

@@ -33,5 +33,11 @@ namespace RentalCarService.Controllers
         {
             CategoriesService.DeleteCategory(Id);
         }
+
+        [HttpPut]
+        public void UpdateCategory(Categories Category)
+        {
+            CategoriesService.UpdateCategory(Category);
+        }
     }
 }

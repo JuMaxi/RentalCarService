@@ -24,7 +24,6 @@ namespace RentalCarService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<ICategoriesService, CategoriesService>();
-            services.AddTransient<IAccessDataBase, AccessDataBase>();
             services.AddTransient<IValidateCategories, ValidateCategories>();
             services.AddTransient<ICountriesService, CountriesService>();
             services.AddTransient<IValidateCountries, ValidateCountries>();

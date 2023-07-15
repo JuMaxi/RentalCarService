@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -55,6 +54,8 @@ namespace RentalCarService.Services
         }
         public void UpdateBranch(Branchs Branch) 
         {
+            ValidateBranchs.ValidateBranch(Branch);
+
             Branchs toUpdate = FindOpeningHoursDB(Branch.Id);
             toUpdate.Name = Branch.Name;
             toUpdate.Phone = Branch.Phone;

@@ -35,6 +35,7 @@ namespace RentalCarService.Services
 
         public void UpdateBrand(Brands Brand)
         {
+            ValidateBrands.ValidateBrandName(Brand);
             Brands toUpdate = _dbContext.Brands.Find(Brand.Id);
             toUpdate.Brand = Brand.Brand;
             _dbContext.SaveChanges();
