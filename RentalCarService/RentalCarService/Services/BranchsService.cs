@@ -40,17 +40,29 @@ namespace RentalCarService.Services
 
         public void DeleteBranch(int Id)
         {
-            Branchs toRemove = _dbContext.Branches.Include(b => b.OpeningHours).Where(B => B.Id == Id).FirstOrDefault();
-
-            foreach(OpeningHours Hours in toRemove.OpeningHours)
-                _dbContext.Remove(Hours);
+            Branchs toRemove = FindOpeningHoursDB(Id);
 
             _dbContext.Remove(toRemove);
             _dbContext.SaveChanges();
         }
+
+        private Branchs FindOpeningHoursDB(int BranchsId)
+        {
+            Branchs Branch = _dbContext.Branches.Include(b => b.OpeningHours).Where(B => B.Id == BranchsId).FirstOrDefault();
+            foreach (OpeningHours Hours in Branch.OpeningHours)
+                _dbContext.Remove(Hours);
+            return Branch;
+        }
         public void UpdateBranch(Branchs Branch) 
         {
+            Branchs toUpdate = FindOpeningHoursDB(Branch.Id);
+            toUpdate.Name = Branch.Name;
+            toUpdate.Phone = Branch.Phone;
+            toUpdate.Country = FindCountryIdDB(Branch.Country.Id);
+            toUpdate.Address = Branch.Address;
+            toUpdate.OpeningHours = Branch.OpeningHours;
             
+            _dbContext.SaveChanges();
         }
     }
 }
