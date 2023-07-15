@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalCarService;
 
@@ -11,9 +12,10 @@ using RentalCarService;
 namespace RentalCarService.Migrations
 {
     [DbContext(typeof(RentalCarsDBContext))]
-    partial class RentalCarsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230714164355_addingBranchs")]
+    partial class addingBranchs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +35,7 @@ namespace RentalCarService.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CountryId")
+                    b.Property<int>("CountryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -43,8 +45,6 @@ namespace RentalCarService.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
 
                     b.ToTable("Branches");
                 });
@@ -152,15 +152,6 @@ namespace RentalCarService.Migrations
                     b.HasIndex("CategoriesId");
 
                     b.ToTable("PriceBands");
-                });
-
-            modelBuilder.Entity("RentalCarService.Models.Branchs", b =>
-                {
-                    b.HasOne("RentalCarService.Models.Countries", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId");
-
-                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("RentalCarService.Models.OpeningHours", b =>

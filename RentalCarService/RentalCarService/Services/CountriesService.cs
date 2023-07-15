@@ -38,6 +38,7 @@ namespace RentalCarService.Services
 
         public void UpdateCountry(Countries Countries)
         {
+            ValidateCountries.ValidateNameCountry(Countries.Country);
             Countries toUpdate = _dbContext.Countries.Find(Countries.Id);
             toUpdate.Country = Countries.Country;
             _dbContext.SaveChanges();

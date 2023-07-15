@@ -24,14 +24,13 @@ namespace RentalCarService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<ICategoriesService, CategoriesService>();
-            services.AddTransient<IAccessDataBase, AccessDataBase>();
             services.AddTransient<IValidateCategories, ValidateCategories>();
             services.AddTransient<ICountriesService, CountriesService>();
             services.AddTransient<IValidateCountries, ValidateCountries>();
             services.AddTransient<IBrandsService, BrandsService>();
             services.AddTransient<IValidateBrands, ValidateBrands>();
             services.AddTransient<IBranchsService, BranchsService>();
-            services.AddTransient<IValidateBranchs, ValidateBranchs>();
+            services.AddTransient<IValidateBranchs, ValidateBranches>();
             services.AddControllers().AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());

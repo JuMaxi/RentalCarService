@@ -1,153 +1,69 @@
-﻿using RentalCarService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using RentalCarService.Interfaces;
 using RentalCarService.Models;
-using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace RentalCarService.Services
 {
     public class BranchsService : IBranchsService
     {
-        IAccessDataBase AccessDB;
         IValidateBranchs ValidateBranchs;
-        public BranchsService(IAccessDataBase Acccess, IValidateBranchs validateBranchs)
+        private readonly RentalCarsDBContext _dbContext;
+        public BranchsService(IValidateBranchs validateBranchs, RentalCarsDBContext dbContext)
         {
-            AccessDB = Acccess;
             ValidateBranchs = validateBranchs;
+            _dbContext = dbContext;
         }
 
         public void InsertNewBranch(Branchs Branch)
         {
             ValidateBranchs.ValidateBranch(Branch);
+            Branch.Country = FindCountryIdDB(Branch.Country.Id);
 
-            string Insert = "insert into Branchs (Name, Phone, CountryId, Address) values ('" +
-                Branch.Name + "','" + Branch.Phone + "', " + Branch.CountryId + ",'" + Branch.Address + "')";
-
-            AccessDB.AccessNonQuery(Insert);
-
-            InsertOpeningHours(Branch.OpeningHours);
+            _dbContext.Branches.Add(Branch);
+            _dbContext.SaveChanges();
+        }
+        private Countries FindCountryIdDB(int Id)
+        {
+            Countries Country = _dbContext.Countries.Where(I => I.Id == Id).FirstOrDefault();
+            return Country;
         }
 
-        private int ReturnLastIdBranch()
+        public List<Branchs> ReadBranchesFromDB()
         {
-            int Id = 0;
-            string Select = "select Max(Id) as Last from Branchs";
-
-            IDataReader Reader = AccessDB.AccessReader(Select);
-
-            while (Reader.Read())
-            {
-                Id = Convert.ToInt32(Reader["Last"]);
-            }
-            return Id;
-        }
-        private void InsertOpeningHours(List<OpeningHours> OpeningHours)
-        {
-            int BranchId = ReturnLastIdBranch();
-
-            foreach (OpeningHours Hour in OpeningHours)
-            {
-                string Insert = "insert into OpeningHours (BranchId, DayOfWeek, Opens, Closes) values (" +
-                BranchId + ",'" + Hour.DayOfWeek + "','" + Hour.Opens + "','" + Hour.Closes + "')";
-
-                AccessDB.AccessNonQuery(Insert);
-
-            }
+            var allBranches = _dbContext.Branches.Include(b => b.OpeningHours).ToList();
+            return allBranches;
         }
 
-        public List<Branchs> ReadBranchsFromDB()
+        public void DeleteBranch(int Id)
         {
-            List<Branchs> ListBranchs = new List<Branchs>();
+            Branchs toRemove = FindOpeningHoursDB(Id);
 
-            string Select = "select Branchs.Id, Branchs.Name, Branchs.Phone, Branchs.CountryId, Branchs.Address, " +
-                "Countries.Country, " +
-                "OpeningHours.BranchId, OpeningHours.DayOfWeek, OpeningHours.Opens, OpeningHours.Closes " +
-                "from Branchs " +
-                "Inner Join Countries ON Branchs.CountryId = Countries.Id " +
-                "Inner Join OpeningHours On Branchs.Id = OpeningHours.BranchId";
-
-            IDataReader Reader = AccessDB.AccessReader(Select);
-            int Id = 0;
-
-            while (Reader.Read())
-            {
-                if (Id != Convert.ToInt32(Reader["Id"]))
-                {
-                    Branchs Branch = new Branchs();
-                    Branch.Id = Convert.ToInt32(Reader["Id"]);
-                    Branch.Name = Reader["Name"].ToString();
-                    Branch.Phone = Reader["Phone"].ToString();
-                    Branch.Address = Reader["Address"].ToString();
-                    Branch.CountryId = Convert.ToInt32(Reader["CountryId"]);
-
-                    Countries Country = new Countries();
-                    Country.Country = Reader["Country"].ToString();
-
-                    OpeningHours Hours = new OpeningHours();
-                    Hours.DayOfWeek = ConvertStringToDayOfWeek((Reader["DayOfWeek"]).ToString());
-                    Hours.Opens = TimeOnly.Parse(Reader["Opens"].ToString());
-                    Hours.Closes = TimeOnly.Parse(Reader["Closes"].ToString());
-
-                    List<OpeningHours> ListHours = new List<OpeningHours>();
-                    ListHours.Add(Hours);
-                    Branch.OpeningHours = ListHours;
-
-                    ListBranchs.Add(Branch);
-
-                    Id = Branch.Id;
-                }
-                else
-                {
-                    OpeningHours Hours = new OpeningHours();
-                    Hours.DayOfWeek = ConvertStringToDayOfWeek((Reader["DayOfWeek"]).ToString());
-                    Hours.Opens = TimeOnly.Parse(Reader["Opens"].ToString());
-                    Hours.Closes = TimeOnly.Parse(Reader["Closes"].ToString());
-
-                    ListBranchs[ListBranchs.Count - 1].OpeningHours.Add(Hours);
-                }
-            }
-
-            return ListBranchs;
+            _dbContext.Remove(toRemove);
+            _dbContext.SaveChanges();
         }
 
-        private DayOfWeek ConvertStringToDayOfWeek(string day)
+        private Branchs FindOpeningHoursDB(int BranchsId)
         {
-            return (DayOfWeek)Enum.Parse(typeof(DayOfWeek), day);
-        }
-
-        private void DeleteOpeningHours(int Id)
-        {
-            string Delete = "Delete from OpeningHours where BranchId=" + Id;
-
-            AccessDB.AccessNonQuery(Delete);
-        }
-        public void DeleteBranchs(int Id)
-        {
-            DeleteOpeningHours(Id);
-
-            string Delete = "delete from Branchs where Id=" + Id;
-
-            AccessDB.AccessNonQuery(Delete);
-        }
-
-        private void UpdateOpeningHours(List<OpeningHours> OpeningHours)
-        {
-            foreach(OpeningHours Hours in OpeningHours)
-            {
-                string Update = "Update OpeningHours set Opens='" + Hours.Opens + "', Closes='" + Hours.Closes + "', DayOfWeek='" +
-                    Hours.DayOfWeek + "' where Id=" + Hours.Id;
-
-                AccessDB.AccessNonQuery(Update);
-            }
+            Branchs Branch = _dbContext.Branches.Include(b => b.OpeningHours).Where(B => B.Id == BranchsId).FirstOrDefault();
+            foreach (OpeningHours Hours in Branch.OpeningHours)
+                _dbContext.Remove(Hours);
+            return Branch;
         }
         public void UpdateBranch(Branchs Branch) 
         {
-            UpdateOpeningHours(Branch.OpeningHours);
+            ValidateBranchs.ValidateBranch(Branch);
 
-            string Update = "Update Branchs set Name='" + Branch.Name + "', Phone='" + Branch.Phone + "', CountryId=" + Branch.CountryId +
-                ", Address='" + Branch.Address + "' where Id=" + Branch.Id;
-
-            AccessDB.AccessNonQuery(Update);
+            Branchs toUpdate = FindOpeningHoursDB(Branch.Id);
+            toUpdate.Name = Branch.Name;
+            toUpdate.Phone = Branch.Phone;
+            toUpdate.Country = FindCountryIdDB(Branch.Country.Id);
+            toUpdate.Address = Branch.Address;
+            toUpdate.OpeningHours = Branch.OpeningHours;
+            
+            _dbContext.SaveChanges();
         }
     }
 }

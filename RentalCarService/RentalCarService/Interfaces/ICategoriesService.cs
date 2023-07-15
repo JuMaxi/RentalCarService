@@ -8,5 +8,7 @@ namespace RentalCarService.Interfaces
         public void RegistryNewCategory(Categories NewCategory);
         public List<Categories> ReadCategoriesFromDB();
         public void DeleteCategory(int Id);
+
+        public void UpdateCategory(Categories Categorie);
     }
 }

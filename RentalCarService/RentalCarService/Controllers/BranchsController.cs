@@ -24,14 +24,14 @@ namespace RentalCarService.Controllers
         [HttpGet]
         public List<Branchs> ReadBranchsFromDB()
         {
-            List<Branchs> ListBranchs = BranchsService.ReadBranchsFromDB();
+            List<Branchs> ListBranchs = BranchsService.ReadBranchesFromDB();
             return ListBranchs;
         }
 
         [HttpDelete]
         public void DeleteBranch([FromQuery] int Id)
         {
-            BranchsService.DeleteBranchs(Id);
+            BranchsService.DeleteBranch(Id);
         }
 
         [HttpPut]
