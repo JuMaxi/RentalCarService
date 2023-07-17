@@ -8,14 +8,18 @@ namespace RentalCarService.Services
 {
     public class CarService : ICarService
     {
+        IValidateCar ValidateCar;
         private readonly RentalCarsDBContext _dbContext;
-        public CarService(RentalCarsDBContext dbContext) 
+        public CarService(IValidateCar validatecar, RentalCarsDBContext dbContext) 
         {
+            ValidateCar = validatecar;
             _dbContext= dbContext;
         }
 
         public void InsertNewCar(Car Car)
         {
+            ValidateCar.Validate(Car);
+
             Car.Brand = FindBrandIdDB(Car.Brand.Id);
             Car.Category = FindCategoryIdDB(Car.Category.Id);
 
@@ -38,6 +42,8 @@ namespace RentalCarService.Services
         }
         public void UpdateCarFleet(Car Car)
         {
+            ValidateCar.Validate(Car);
+
             Car toUpdate = _dbContext.Fleet.Find(Car.Id);
             toUpdate.Brand = FindBrandIdDB(Car.Brand.Id);
             toUpdate.Model = Car.Model;
