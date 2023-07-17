@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalCarService;
 
@@ -11,9 +12,10 @@ using RentalCarService;
 namespace RentalCarService.Migrations
 {
     [DbContext(typeof(RentalCarsDBContext))]
-    partial class RentalCarsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230717115128_ChangingNameClassesFleetToCar")]
+    partial class ChangingNameClassesFleetToCar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,8 +84,8 @@ namespace RentalCarService.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Doors")
-                        .HasColumnType("int");
+                    b.Property<string>("Doors")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Model")
                         .HasColumnType("nvarchar(max)");
@@ -91,8 +93,8 @@ namespace RentalCarService.Migrations
                     b.Property<string>("NumberPlate")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Seats")
-                        .HasColumnType("int");
+                    b.Property<string>("Seats")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Transmission")
                         .HasColumnType("nvarchar(max)");
@@ -100,8 +102,8 @@ namespace RentalCarService.Migrations
                     b.Property<int>("TrunkSize")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Year")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Year")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

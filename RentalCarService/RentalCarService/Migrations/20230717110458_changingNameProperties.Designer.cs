@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalCarService;
 
@@ -11,9 +12,10 @@ using RentalCarService;
 namespace RentalCarService.Migrations
 {
     [DbContext(typeof(RentalCarsDBContext))]
-    partial class RentalCarsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230717110458_changingNameProperties")]
+    partial class changingNameProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,53 +67,6 @@ namespace RentalCarService.Migrations
                     b.ToTable("Brands");
                 });
 
-            modelBuilder.Entity("RentalCarService.Models.Car", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("AirConditioner")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Doors")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Model")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NumberPlate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Seats")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Transmission")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TrunkSize")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Year")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BrandId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Fleet");
-                });
-
             modelBuilder.Entity("RentalCarService.Models.Categories", b =>
                 {
                     b.Property<int>("Id")
@@ -145,6 +100,53 @@ namespace RentalCarService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("RentalCarService.Models.Fleet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AirConditioner")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Doors")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NumberPlate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Seats")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Transmission")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TrunkSize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Year")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Fleet");
                 });
 
             modelBuilder.Entity("RentalCarService.Models.OpeningHours", b =>
@@ -210,7 +212,7 @@ namespace RentalCarService.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("RentalCarService.Models.Car", b =>
+            modelBuilder.Entity("RentalCarService.Models.Fleet", b =>
                 {
                     b.HasOne("RentalCarService.Models.Brands", "Brand")
                         .WithMany()

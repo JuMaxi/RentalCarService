@@ -31,6 +31,8 @@ namespace RentalCarService
             services.AddTransient<IValidateBrands, ValidateBrands>();
             services.AddTransient<IBranchsService, BranchsService>();
             services.AddTransient<IValidateBranchs, ValidateBranches>();
+            services.AddTransient<ICarService, CarService>();
+            services.AddTransient<IValidateCar, ValidateCar>(); 
             services.AddControllers().AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
