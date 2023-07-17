@@ -9,6 +9,8 @@
     <Compile Remove="Interfaces\IAccessDataBase.cs" />
     <Compile Remove="Interfaces\IPriceBandsService.cs" />
     <Compile Remove="Interfaces\IValidatePrices.cs" />
+    <Compile Remove="Migrations\20230717115128_ChangingNameClassesFleetToCar.cs" />
+    <Compile Remove="Migrations\20230717115128_ChangingNameClassesFleetToCar.Designer.cs" />
     <Compile Remove="Services\AccessDataBase.cs" />
     <Compile Remove="Services\PriceBandsService.cs" />
     <Compile Remove="Validators\ValidatePrices.cs" />

@@ -19,6 +19,8 @@ namespace RentalCarService
         public DbSet<Categories> Categories { get; set; }
         public DbSet<Branchs> Branches { get; set; }
 
+        public DbSet<Car> Fleet { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OpeningHours>(builder =>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalCarService;
 
@@ -11,9 +12,10 @@ using RentalCarService;
 namespace RentalCarService.Migrations
 {
     [DbContext(typeof(RentalCarsDBContext))]
-    partial class RentalCarsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230717110458_changingNameProperties")]
+    partial class changingNameProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +67,42 @@ namespace RentalCarService.Migrations
                     b.ToTable("Brands");
                 });
 
-            modelBuilder.Entity("RentalCarService.Models.Car", b =>
+            modelBuilder.Entity("RentalCarService.Models.Categories", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("RentalCarService.Models.Countries", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("RentalCarService.Models.Fleet", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,41 +147,6 @@ namespace RentalCarService.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Fleet");
-                });
-
-            modelBuilder.Entity("RentalCarService.Models.Categories", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("RentalCarService.Models.Countries", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Countries");
                 });
 
             modelBuilder.Entity("RentalCarService.Models.OpeningHours", b =>
@@ -210,7 +212,7 @@ namespace RentalCarService.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("RentalCarService.Models.Car", b =>
+            modelBuilder.Entity("RentalCarService.Models.Fleet", b =>
                 {
                     b.HasOne("RentalCarService.Models.Brands", "Brand")
                         .WithMany()
