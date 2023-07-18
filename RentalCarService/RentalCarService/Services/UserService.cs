@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RentalCarService.Interfaces;
-using RentalCarService.Migrations;
 using RentalCarService.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +8,18 @@ namespace RentalCarService.Services
 {
     public class UserService : IUserService
     {
+        IValidateUser ValidateUser;
         private readonly RentalCarsDBContext _dbContext;
 
-        public UserService(RentalCarsDBContext dbContext)
+        public UserService(IValidateUser Validate, RentalCarsDBContext dbContext)
         {
+            ValidateUser = Validate;
             _dbContext = dbContext;
         }
         public void InserNewUser(User User)
         {
+            ValidateUser.Validate(User);
+
             User.Nationality = FindIdCountryDB(User.Nationality.Id);
             User.CountryCNH = FindIdCountryDB(User.CountryCNH.Id);
             User.Address.Country = FindIdCountryDB(User.Address.Country.Id);
@@ -47,6 +49,8 @@ namespace RentalCarService.Services
 
         public void UpdateUser(User User)
         {
+            ValidateUser.Validate(User);
+
             User toUpdate = _dbContext.Users.Find(User.Id);
             toUpdate.Nationality = FindIdCountryDB(User.Nationality.Id);
             toUpdate.CountryCNH= FindIdCountryDB(User.CountryCNH.Id) ;
