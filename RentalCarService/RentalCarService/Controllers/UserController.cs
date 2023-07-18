@@ -27,5 +27,17 @@ namespace RentalCarService.Controllers
             List<User> Users = UserService.ReadUsersFromDB();
             return Users;
         }
+
+        [HttpDelete]
+        public void DeleteUsersFromDB([FromQuery]int Id)
+        {
+            UserService.DeleteUser(Id);
+        }
+
+        [HttpPut]
+        public void UpdateUser(User User)
+        {
+            UserService.UpdateUser(User);
+        }
     }
 }
