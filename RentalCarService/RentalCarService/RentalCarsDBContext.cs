@@ -20,6 +20,7 @@ namespace RentalCarService
         public DbSet<Branchs> Branches { get; set; }
 
         public DbSet<Car> Fleet { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
