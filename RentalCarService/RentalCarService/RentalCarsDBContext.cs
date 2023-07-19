@@ -22,6 +22,7 @@ namespace RentalCarService
         public DbSet<Car> Fleet { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Extraa> Extras { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OpeningHours>(builder =>
