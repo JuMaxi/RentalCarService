@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalCarService;
 
@@ -11,9 +12,10 @@ using RentalCarService;
 namespace RentalCarService.Migrations
 {
     [DbContext(typeof(RentalCarsDBContext))]
-    partial class RentalCarsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230726154443_AddingVariablesHourGetAndHourReturn")]
+    partial class AddingVariablesHourGetAndHourReturn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,10 +32,7 @@ namespace RentalCarService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("BranchGetId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BranchReturnId")
+                    b.Property<int?>("BranchId")
                         .HasColumnType("int");
 
                     b.Property<int?>("CategoryId")
@@ -42,14 +41,17 @@ namespace RentalCarService.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ExtraId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FinishDay")
+                        .HasColumnType("datetime2");
+
                     b.Property<TimeSpan>("HourGetCar")
                         .HasColumnType("time");
 
                     b.Property<TimeSpan>("HourReturnCar")
                         .HasColumnType("time");
-
-                    b.Property<DateTime>("ReturnDay")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("StartDay")
                         .HasColumnType("datetime2");
@@ -62,11 +64,11 @@ namespace RentalCarService.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BranchGetId");
-
-                    b.HasIndex("BranchReturnId");
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ExtraId");
 
                     b.HasIndex("UserId");
 
@@ -206,9 +208,6 @@ namespace RentalCarService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("BookId")
-                        .HasColumnType("int");
-
                     b.Property<int>("DayCost")
                         .HasColumnType("int");
 
@@ -219,8 +218,6 @@ namespace RentalCarService.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookId");
 
                     b.ToTable("Extras");
                 });
@@ -372,27 +369,27 @@ namespace RentalCarService.Migrations
 
             modelBuilder.Entity("RentalCarService.Models.Book", b =>
                 {
-                    b.HasOne("RentalCarService.Models.Branchs", "BranchGet")
+                    b.HasOne("RentalCarService.Models.Branchs", "Branch")
                         .WithMany()
-                        .HasForeignKey("BranchGetId");
-
-                    b.HasOne("RentalCarService.Models.Branchs", "BranchReturn")
-                        .WithMany()
-                        .HasForeignKey("BranchReturnId");
+                        .HasForeignKey("BranchId");
 
                     b.HasOne("RentalCarService.Models.Categories", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
 
+                    b.HasOne("RentalCarService.Models.Extraa", "Extra")
+                        .WithMany()
+                        .HasForeignKey("ExtraId");
+
                     b.HasOne("RentalCarService.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
-                    b.Navigation("BranchGet");
-
-                    b.Navigation("BranchReturn");
+                    b.Navigation("Branch");
 
                     b.Navigation("Category");
+
+                    b.Navigation("Extra");
 
                     b.Navigation("User");
                 });
@@ -419,13 +416,6 @@ namespace RentalCarService.Migrations
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("RentalCarService.Models.Extraa", b =>
-                {
-                    b.HasOne("RentalCarService.Models.Book", null)
-                        .WithMany("Extra")
-                        .HasForeignKey("BookId");
                 });
 
             modelBuilder.Entity("RentalCarService.Models.OpeningHours", b =>
@@ -470,11 +460,6 @@ namespace RentalCarService.Migrations
                         .HasForeignKey("CountryId");
 
                     b.Navigation("Country");
-                });
-
-            modelBuilder.Entity("RentalCarService.Models.Book", b =>
-                {
-                    b.Navigation("Extra");
                 });
 
             modelBuilder.Entity("RentalCarService.Models.Branchs", b =>
