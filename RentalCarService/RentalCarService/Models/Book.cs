@@ -11,7 +11,7 @@ namespace RentalCarService.Models
         public Categories Category { get; set; }
         public Branchs BranchGet { get; set; }
         public Branchs BranchReturn { get; set; }
-        public List<Extraa> Extra { get; set; }
+        public List<BookExtra> BookExtra { get; set; }
         public int ValueToPay { get; set; }
         public DateTime StartDay { get; set; }
         public DateTime ReturnDay { get; set; }
