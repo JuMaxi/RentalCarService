@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalCarService;
 
@@ -11,9 +12,10 @@ using RentalCarService;
 namespace RentalCarService.Migrations
 {
     [DbContext(typeof(RentalCarsDBContext))]
-    partial class RentalCarsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230728144855_ChangingValueToPayTodouble")]
+    partial class ChangingValueToPayTodouble
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,11 +231,11 @@ namespace RentalCarService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<double>("DayCost")
-                        .HasColumnType("float");
+                    b.Property<int>("DayCost")
+                        .HasColumnType("int");
 
-                    b.Property<double>("FixedCost")
-                        .HasColumnType("float");
+                    b.Property<int>("FixedCost")
+                        .HasColumnType("int");
 
                     b.Property<string>("Service")
                         .HasColumnType("nvarchar(max)");

@@ -12,7 +12,7 @@ namespace RentalCarService.Models
         public Branchs BranchGet { get; set; }
         public Branchs BranchReturn { get; set; }
         public List<BookExtra> BookExtra { get; set; }
-        public int ValueToPay { get; set; }
+        public double ValueToPay { get; set; }
         public DateTime StartDay { get; set; }
         public DateTime ReturnDay { get; set; }
         public TimeOnly HourGetCar { get; set; }

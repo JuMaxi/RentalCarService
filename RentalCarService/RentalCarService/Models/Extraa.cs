@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string Service { get; set; }
-        public int DayCost { get; set; }
-        public int FixedCost { get; set; }
+        public double DayCost { get; set; }
+        public double FixedCost { get; set; }
     }   
 }
