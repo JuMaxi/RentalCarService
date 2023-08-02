@@ -21,14 +21,26 @@ namespace RentalCarService.Services
         public void InsertNewBook(Book book)
         {
             book.Category = FindCategoryDB(book);
+            book.BranchGet = FindBranchDB(book.BranchGet.Id);
+            book.BranchReturn = FindBranchDB(book.BranchReturn.Id);
             book.User = FindCountryDB(book.User.Id);
             book.Code = GenerateBookNumber();
+            book.BookExtra = SaveExtraToBookExtra(book);
             book.ValueToPay = CalculateValueToPay(book);
 
             _dbContext.Books.Add(book);
             _dbContext.SaveChanges();
         }
 
+        private List<BookExtra> SaveExtraToBookExtra(Book book)
+        {
+            List<Extraa> listExtra = FindExtraDB(book);
+            for (int i = 0; i < listExtra.Count; i++)
+            {
+                book.BookExtra[i].Extra = listExtra[i];
+            }
+            return book.BookExtra;
+        }
         private string GenerateBookNumber()
         {
             int size = 6;
@@ -69,7 +81,7 @@ namespace RentalCarService.Services
         {
             Categories Category = FindCategoryDB(Book);
 
-            int DaysTotal = Book.ReturnDay.Day - Book.StartDay.Day;
+            int DaysTotal = (Book.ReturnDay.Day - Book.StartDay.Day) + 1;
             double PriceDay = 0;
 
 
@@ -88,24 +100,32 @@ namespace RentalCarService.Services
 
         private double CalculateExtraCosts(Book Book)
         {
-            int DaysTotal = Book.ReturnDay.Day - Book.StartDay.Day;
+            int DaysTotal = (Book.ReturnDay.Day - Book.StartDay.Day) + 1;
 
             double ExtraCosts = 0;
-            foreach (BookExtra b in Book.BookExtra)
-            {
-                Extraa extra = FindExtraCost(b.Extra.Id);
 
-                ExtraCosts = ExtraCosts + extra.DayCost * DaysTotal;
-                ExtraCosts += extra.FixedCost;
+            List<Extraa> listExtra = FindExtraDB(Book);
+
+            foreach (Extraa b in listExtra)
+            {
+                ExtraCosts = ExtraCosts + b.DayCost * DaysTotal;
+                ExtraCosts += b.FixedCost;
             }
             return ExtraCosts;
         }
 
-        private Extraa FindExtraCost(int Id)
+        private List<Extraa> FindExtraDB(Book Book)
         {
-            Extraa extra = _dbContext.Extras.Find(Id);
-            return extra;
+            var ids = Book.BookExtra.Select(bookExtra => bookExtra.Extra.Id).ToList(); // [1, 4]
+            var listExtras = _dbContext.Extras.Where(extra => ids.Contains(extra.Id)).ToList(); // usa a lista para filtro
+            return listExtras;
 
+        }
+
+        private Branchs FindBranchDB(int id)
+        {
+            var branch = _dbContext.Branches.Include(O => O.OpeningHours).Where(B => B.Id == id).FirstOrDefault();
+            return branch;
         }
         private Categories FindCategoryDB(Book Book)
         {
