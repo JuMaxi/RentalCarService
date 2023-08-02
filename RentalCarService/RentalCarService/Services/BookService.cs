@@ -34,24 +34,25 @@ namespace RentalCarService.Services
             int size = 6;
             Random random = new Random();
             string AlphabetNumbers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            string code = "";
 
 
             char[] chars = new char[size];
             for (int Position = 0; Position < size; Position++)
             {
                 chars[Position] = AlphabetNumbers[random.Next(AlphabetNumbers.Length)];
-
+                code= code + chars[Position];
             }
 
-            CheckBookNumberCodeDB(chars.ToString());
-            return chars.ToString();
+            CheckBookNumberCodeDB(code);
+            return code;
         }
 
         private void CheckBookNumberCodeDB(string Code)
         {
             var Book = _dbContext.Books.Where(c => c.Code == Code).FirstOrDefault();
 
-            if (Code == Book.Code)
+            if (Book != null)
             {
                 GenerateBookNumber();
             }
@@ -72,11 +73,12 @@ namespace RentalCarService.Services
             double PriceDay = 0;
 
 
-            foreach (PriceBands P in Category.PriceBands)
+            foreach(PriceBands p in Category.PriceBands)
             {
-                if (DaysTotal >= P.MaxDays)
+                if(DaysTotal >= p.MinDays && DaysTotal <= p.MaxDays)
                 {
-                    PriceDay = P.Price;
+                    PriceDay = p.Price;
+                    break;
                 }
             }
 
@@ -86,19 +88,25 @@ namespace RentalCarService.Services
 
         private double CalculateExtraCosts(Book Book)
         {
-            var Extras = _dbContext.Books.Include(E => E.BookExtra).Where(B => B.Id == Book.Id).FirstOrDefault();
             int DaysTotal = Book.ReturnDay.Day - Book.StartDay.Day;
 
             double ExtraCosts = 0;
-
-            foreach (var E in Extras.BookExtra)
+            foreach (BookExtra b in Book.BookExtra)
             {
-                ExtraCosts = E.Extra.DayCost * DaysTotal;
-                ExtraCosts += E.Extra.FixedCost;
+                Extraa extra = FindExtraCost(b.Extra.Id);
+
+                ExtraCosts = ExtraCosts + extra.DayCost * DaysTotal;
+                ExtraCosts += extra.FixedCost;
             }
             return ExtraCosts;
         }
 
+        private Extraa FindExtraCost(int Id)
+        {
+            Extraa extra = _dbContext.Extras.Find(Id);
+            return extra;
+
+        }
         private Categories FindCategoryDB(Book Book)
         {
             Categories Category = _dbContext.Categories.Include(P => P.PriceBands).Where(C => C.Id == Book.Category.Id).FirstOrDefault();
@@ -117,7 +125,7 @@ namespace RentalCarService.Services
 
             return User;
         }
-       
+
 
     }
 }
