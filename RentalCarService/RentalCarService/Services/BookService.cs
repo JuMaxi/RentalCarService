@@ -12,14 +12,18 @@ namespace RentalCarService.Services
     public class BookService : IBookService
     {
         private readonly RentalCarsDBContext _dbContext;
+        IValidateBook _validateBook;
 
-        public BookService(RentalCarsDBContext dbContext)
+        public BookService(RentalCarsDBContext dbContext, IValidateBook validateBook)
         {
             _dbContext = dbContext;
+            _validateBook = validateBook;
         }
 
         public void InsertNewBook(Book book)
         {
+            _validateBook.Validate(book);
+
             book.Category = FindCategoryDB(book);
             book.BranchGet = FindBranchDB(book.BranchGet.Id);
             book.BranchReturn = FindBranchDB(book.BranchReturn.Id);

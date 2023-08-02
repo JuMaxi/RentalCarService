@@ -38,6 +38,7 @@ namespace RentalCarService
             services.AddTransient<IExtraService, ExtraService>();
             services.AddTransient<IValidateExtra, ValidateExtra>();
             services.AddTransient<IBookService, BookService>();
+            services.AddTransient<IValidateBook, ValidateBook>();
             services.AddControllers().AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
