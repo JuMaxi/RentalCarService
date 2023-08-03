@@ -57,16 +57,16 @@ namespace RentalCarService.Services
             for (int Position = 0; Position < size; Position++)
             {
                 chars[Position] = AlphabetNumbers[random.Next(AlphabetNumbers.Length)];
-                code= code + chars[Position];
+                code = code + chars[Position];
             }
 
             CheckBookNumberCodeDB(code);
             return code;
         }
 
-        private void CheckBookNumberCodeDB(string Code)
+        private void CheckBookNumberCodeDB(string code)
         {
-            var Book = _dbContext.Books.Where(c => c.Code == Code).FirstOrDefault();
+            var Book = _dbContext.Books.Where(c => c.Code == code).FirstOrDefault();
 
             if (Book != null)
             {
@@ -74,41 +74,42 @@ namespace RentalCarService.Services
             }
         }
 
-        private double CalculateValueToPay(Book Book)
+        private double CalculateValueToPay(Book book)
         {
-            double TotalValueToPay = ValueToPayPerDay(Book) + CalculateExtraCosts(Book);
+            double TotalValueToPay = ValueToPayPerDay(book) + CalculateExtraCosts(book);
 
             return TotalValueToPay;
         }
 
-        private double ValueToPayPerDay(Book Book)
+        private double ValueToPayPerDay(Book book)
         {
-            Categories Category = FindCategoryDB(Book);
+            Categories category = FindCategoryDB(book);
 
-            int DaysTotal = (Book.ReturnDay.Day - Book.StartDay.Day) + 1;
+            int daysTotal = CalculateDaysBook(book);
+
             double PriceDay = 0;
 
 
-            foreach(PriceBands p in Category.PriceBands)
+            foreach (PriceBands p in category.PriceBands)
             {
-                if(DaysTotal >= p.MinDays && DaysTotal <= p.MaxDays)
+                if (daysTotal >= p.MinDays && daysTotal <= p.MaxDays)
                 {
                     PriceDay = p.Price;
                     break;
                 }
             }
 
-            double PriceTotalDays = PriceDay * DaysTotal;
+            double PriceTotalDays = PriceDay * daysTotal;
             return PriceTotalDays;
         }
 
-        private double CalculateExtraCosts(Book Book)
+        private double CalculateExtraCosts(Book book)
         {
-            int DaysTotal = (Book.ReturnDay.Day - Book.StartDay.Day) + 1;
+            int DaysTotal = CalculateDaysBook(book);
 
             double ExtraCosts = 0;
 
-            List<Extraa> listExtra = FindExtraDB(Book);
+            List<Extraa> listExtra = FindExtraDB(book);
 
             foreach (Extraa b in listExtra)
             {
@@ -150,6 +151,21 @@ namespace RentalCarService.Services
             return User;
         }
 
+        private int CalculateDaysBook(Book book)
+        {
+            int daysTotal = 0;
+
+            if (book.HourReturnCar < book.HourGetCar)
+            {
+                daysTotal = (book.ReturnDay.Day - book.StartDay.Day);
+            }
+            else
+            {
+                daysTotal = (book.ReturnDay.Day - book.StartDay.Day) + 1;
+            }
+
+            return daysTotal;
+        }
 
     }
 }
