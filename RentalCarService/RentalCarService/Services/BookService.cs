@@ -60,18 +60,18 @@ namespace RentalCarService.Services
                 code = code + chars[Position];
             }
 
-            CheckBookNumberCodeDB(code);
-            return code;
+            return CheckBookNumberCodeDB(code);
         }
 
-        private void CheckBookNumberCodeDB(string code)
+        private string CheckBookNumberCodeDB(string code)
         {
             var Book = _dbContext.Books.Where(c => c.Code == code).FirstOrDefault();
 
             if (Book != null)
             {
-                GenerateBookNumber();
+                code = GenerateBookNumber();
             }
+            return code;
         }
 
         private double CalculateValueToPay(Book book)
@@ -153,18 +153,14 @@ namespace RentalCarService.Services
 
         private int CalculateDaysBook(Book book)
         {
-            int daysTotal = 0;
-
-            if (book.HourReturnCar < book.HourGetCar)
+            if (book.HourReturnCar <= book.HourGetCar)
             {
-                daysTotal = (book.ReturnDay.Day - book.StartDay.Day);
+                return (book.ReturnDay.Day - book.StartDay.Day);
             }
             else
             {
-                daysTotal = (book.ReturnDay.Day - book.StartDay.Day) + 1;
+                return (book.ReturnDay.Day - book.StartDay.Day) + 1;
             }
-
-            return daysTotal;
         }
 
     }

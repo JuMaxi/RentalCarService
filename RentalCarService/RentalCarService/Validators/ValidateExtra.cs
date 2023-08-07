@@ -16,6 +16,14 @@ namespace RentalCarService.Validators
             {
                 throw new Exception("The cost must be greater than zero.");
             }
+            if(Extra.DayCost == 0 && Extra.FixedCost == 0)
+            {
+                throw new Exception("At least one field cost must be filled to continue.");
+            }
+            if(Extra.DayCost > 0 && Extra.FixedCost > 0)
+            {
+                throw new Exception("Just one field cost must be filled.");
+            }
         }
 
     }
