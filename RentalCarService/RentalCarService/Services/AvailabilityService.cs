@@ -9,6 +9,7 @@ namespace RentalCarService.Services
     {
         public bool ExistsAvailabilityForBooking(Book candidate, List<Book> nearbyBookings)
         {
+            // _dbContext.Books.Where().ToList()
             foreach (Book b in nearbyBookings)
             {
                 DateTime actualBook = candidate.StartDay;
