@@ -1,11 +1,6 @@
 ﻿using FluentAssertions;
 using RentalCarService.Models;
 using RentalCarService.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RentarlCars.Tests
 {
@@ -204,6 +199,38 @@ namespace RentarlCars.Tests
             IsAvailable.Should().BeTrue();
         }
 
+        [Fact]
+        public void should_consider_time_when_checking_availability()
+        {
+            Book candidate = new Book()
+            {
+                StartDay = new DateTime(2023, 09, 3),
+                ReturnDay = new DateTime(2023, 09, 4),
+                HourGetCar = new TimeOnly(10, 00),
+                HourReturnCar = new TimeOnly(15, 00)
+            };
 
+            Book existingBooking1 = new Book()
+            {
+                StartDay = new DateTime(2023, 09, 1),
+                ReturnDay = new DateTime(2023, 09, 3),
+                HourGetCar = new TimeOnly(08, 00),
+                HourReturnCar = new TimeOnly(08, 00)
+            };
+
+            Book existingBooking2 = new Book()
+            {
+                StartDay = new DateTime(2023, 09, 4),
+                ReturnDay = new DateTime(2023, 09, 5),
+                HourGetCar = new TimeOnly(17, 00),
+                HourReturnCar = new TimeOnly(17, 00)
+            };
+
+            var existing = new List<Book>() { existingBooking1, existingBooking2 };
+            AvailabilityService service = new AvailabilityService();
+            bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, existing);
+
+            IsAvailable.Should().BeTrue();
+        }
     }
 }
