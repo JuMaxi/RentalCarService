@@ -5,6 +5,6 @@ namespace RentalCarService.Interfaces
 {
     public interface IAvailabilityService
     {
-        bool ExistsAvailabilityForBooking(Book candidate, List<Book> nearbyBookings);
+        bool ExistsAvailabilityForBooking(Booking candidate, List<Booking> nearbyBookings, int amountCarsInCategory = 1);
     }
 }

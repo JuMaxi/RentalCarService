@@ -9,41 +9,41 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace RentalCarService.Services
 {
-    public class BookService : IBookService
+    public class BookingService : IBookingService
     {
         private readonly RentalCarsDBContext _dbContext;
-        IValidateBook _validateBook;
+        IValidateBooking _validateBook;
 
-        public BookService(RentalCarsDBContext dbContext, IValidateBook validateBook)
+        public BookingService(RentalCarsDBContext dbContext, IValidateBooking validateBook)
         {
             _dbContext = dbContext;
             _validateBook = validateBook;
         }
 
-        public void InsertNewBook(Book book)
+        public void InsertNewBook(Booking booking)
         {
-            _validateBook.Validate(book);
+            _validateBook.Validate(booking);
 
-            book.Category = FindCategoryDB(book);
-            book.BranchGet = FindBranchDB(book.BranchGet.Id);
-            book.BranchReturn = FindBranchDB(book.BranchReturn.Id);
-            book.User = FindCountryDB(book.User.Id);
-            book.Code = GenerateBookNumber();
-            book.BookExtra = SaveExtraToBookExtra(book);
-            book.ValueToPay = CalculateValueToPay(book);
+            booking.Category = FindCategoryDB(booking);
+            booking.BranchGet = FindBranchDB(booking.BranchGet.Id);
+            booking.BranchReturn = FindBranchDB(booking.BranchReturn.Id);
+            booking.User = FindCountryDB(booking.User.Id);
+            booking.Code = GenerateBookNumber();
+            booking.BookExtra = SaveExtraToBookExtra(booking);
+            booking.ValueToPay = CalculateValueToPay(booking);
 
-            _dbContext.Books.Add(book);
+            _dbContext.Books.Add(booking);
             _dbContext.SaveChanges();
         }
 
-        private List<BookExtra> SaveExtraToBookExtra(Book book)
+        private List<BookingExtra> SaveExtraToBookExtra(Booking booking)
         {
-            List<Extraa> listExtra = FindExtraDB(book);
+            List<Extraa> listExtra = FindExtraDB(booking);
             for (int i = 0; i < listExtra.Count; i++)
             {
-                book.BookExtra[i].Extra = listExtra[i];
+                booking.BookExtra[i].Extra = listExtra[i];
             }
-            return book.BookExtra;
+            return booking.BookExtra;
         }
         private string GenerateBookNumber()
         {
@@ -74,18 +74,18 @@ namespace RentalCarService.Services
             return code;
         }
 
-        private double CalculateValueToPay(Book book)
+        private double CalculateValueToPay(Booking booking)
         {
-            double TotalValueToPay = ValueToPayPerDay(book) + CalculateExtraCosts(book);
+            double TotalValueToPay = ValueToPayPerDay(booking) + CalculateExtraCosts(booking);
 
             return TotalValueToPay;
         }
 
-        private double ValueToPayPerDay(Book book)
+        private double ValueToPayPerDay(Booking booking)
         {
-            Categories category = FindCategoryDB(book);
+            Categories category = FindCategoryDB(booking);
 
-            int daysTotal = CalculateDaysBook(book);
+            int daysTotal = CalculateDaysBook(booking);
 
             double PriceDay = 0;
 
@@ -103,13 +103,13 @@ namespace RentalCarService.Services
             return PriceTotalDays;
         }
 
-        private double CalculateExtraCosts(Book book)
+        private double CalculateExtraCosts(Booking booking)
         {
-            int DaysTotal = CalculateDaysBook(book);
+            int DaysTotal = CalculateDaysBook(booking);
 
             double ExtraCosts = 0;
 
-            List<Extraa> listExtra = FindExtraDB(book);
+            List<Extraa> listExtra = FindExtraDB(booking);
 
             foreach (Extraa b in listExtra)
             {
@@ -119,9 +119,9 @@ namespace RentalCarService.Services
             return ExtraCosts;
         }
 
-        private List<Extraa> FindExtraDB(Book Book)
+        private List<Extraa> FindExtraDB(Booking booking)
         {
-            var ids = Book.BookExtra.Select(bookExtra => bookExtra.Extra.Id).ToList(); // [1, 4]
+            var ids = booking.BookExtra.Select(bookExtra => bookExtra.Extra.Id).ToList(); // [1, 4]
             var listExtras = _dbContext.Extras.Where(extra => ids.Contains(extra.Id)).ToList(); // usa a lista para filtro
             return listExtras;
 
@@ -132,9 +132,9 @@ namespace RentalCarService.Services
             var branch = _dbContext.Branches.Include(O => O.OpeningHours).Where(B => B.Id == id).FirstOrDefault();
             return branch;
         }
-        private Categories FindCategoryDB(Book Book)
+        private Categories FindCategoryDB(Booking booking)
         {
-            Categories Category = _dbContext.Categories.Include(P => P.PriceBands).Where(C => C.Id == Book.Category.Id).FirstOrDefault();
+            Categories Category = _dbContext.Categories.Include(P => P.PriceBands).Where(C => C.Id == booking.Category.Id).FirstOrDefault();
             return Category;
         }
 
@@ -151,15 +151,15 @@ namespace RentalCarService.Services
             return User;
         }
 
-        private int CalculateDaysBook(Book book)
+        private int CalculateDaysBook(Booking booking)
         {
-            if (book.HourReturnCar <= book.HourGetCar)
+            if (booking.HourReturnCar <= booking.HourGetCar)
             {
-                return (book.ReturnDay.Day - book.StartDay.Day);
+                return (booking.ReturnDay.Day - booking.StartDay.Day);
             }
             else
             {
-                return (book.ReturnDay.Day - book.StartDay.Day) + 1;
+                return (booking.ReturnDay.Day - booking.StartDay.Day) + 1;
             }
         }
 

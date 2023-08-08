@@ -2,8 +2,8 @@
 
 namespace RentalCarService.Interfaces
 {
-    public interface IValidateBook
+    public interface IBookingService
     {
-        public void Validate(Book book);
+        public void InsertNewBook(Booking book);
     }
 }

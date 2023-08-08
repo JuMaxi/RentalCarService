@@ -7,10 +7,11 @@ namespace RentalCarService.Services
 {
     public class AvailabilityService : IAvailabilityService
     {
-        public bool ExistsAvailabilityForBooking(Book candidate, List<Book> nearbyBookings)
+        public bool ExistsAvailabilityForBooking(Booking candidate, List<Booking> nearbyBookings, int amountCarsInCategory = 1)
         {
             DateTime newDate = candidate.StartDay;
             int index = 0;
+            int numberBookings = 1;
             
             while(index < nearbyBookings.Count)
             {
@@ -19,7 +20,8 @@ namespace RentalCarService.Services
                     //add one hour to give time to clean the car.
                     if (candidate.HourReturnCar.AddHours(1) >= nearbyBookings[index].HourGetCar)
                     {
-                        return false;
+                        numberBookings++;
+                        break;
                     }
                 }
                 if (newDate == candidate.ReturnDay)
@@ -30,6 +32,10 @@ namespace RentalCarService.Services
                 newDate = newDate.AddDays(1);
             }
 
+            if((amountCarsInCategory / numberBookings) < 1)
+            {
+                return false;
+            }
             return true;
         }
     }

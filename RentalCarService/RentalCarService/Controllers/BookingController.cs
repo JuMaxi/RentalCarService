@@ -6,16 +6,16 @@ namespace RentalCarService.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
-    public class BookController : ControllerBase
+    public class BookingController : ControllerBase
     {
-        IBookService BookService;
+        IBookingService BookService;
 
-        public BookController(IBookService bookService)
+        public BookingController(IBookingService bookService)
         {
             BookService= bookService;
         }
 
-        public void InsertNewBook(Book book)
+        public void InsertNewBook(Booking book)
         {
             BookService.InsertNewBook(book);
         }
