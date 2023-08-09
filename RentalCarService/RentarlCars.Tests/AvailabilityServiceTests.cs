@@ -263,5 +263,49 @@ namespace RentarlCars.Tests
 
             IsAvailable.Should().BeTrue();
         }
+
+        [Fact]
+        public void testing_scenario_reservation_where_all_cars_are_booked()
+        {
+            Booking candidate = new Booking()
+            {
+                StartDay = new DateTime(2023, 08, 30),
+                ReturnDay = new DateTime(2023, 09, 6),
+                HourGetCar = new TimeOnly(08, 00),
+                HourReturnCar = new TimeOnly(14, 00)
+            };
+
+            Booking existingBooking1 = new Booking()
+            {
+                StartDay = new DateTime(2023, 09, 1),
+                ReturnDay = new DateTime(2023, 09, 3),
+                HourGetCar = new TimeOnly(08, 00),
+                HourReturnCar = new TimeOnly(17, 00)
+            };
+
+            Booking existingBooking2 = new Booking()
+            {
+                StartDay = new DateTime(2023, 09, 1),
+                ReturnDay = new DateTime(2023, 09, 3),
+                HourGetCar = new TimeOnly(08, 00),
+                HourReturnCar = new TimeOnly(17, 00)
+            };
+
+            Booking existingBooking3 = new Booking()
+            {
+                StartDay = new DateTime(2023, 09, 6),
+                ReturnDay = new DateTime(2023, 09, 6),
+                HourGetCar = new TimeOnly(09, 00),
+                HourReturnCar = new TimeOnly(17, 00)
+            };
+
+            var existing = new List<Booking>() { existingBooking1, existingBooking2, existingBooking3 };
+
+
+            AvailabilityService service = new AvailabilityService();
+            bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, existing, 2);
+
+            IsAvailable.Should().BeFalse();
+        }
     }
 }
