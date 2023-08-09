@@ -23,6 +23,7 @@ namespace RentalCarService
         public DbSet<User> Users { get; set; }
 
         public DbSet<Extraa> Extras { get; set; }
+        public DbSet<Booking> Books { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OpeningHours>(builder =>
@@ -34,9 +35,19 @@ namespace RentalCarService
                 builder.Property(x => x.Closes)
                     .HasConversion<TimeOnlyDbConverter, TimeOnlyComparer>();
             });
+
+            modelBuilder.Entity<Booking>(builder =>
+            {
+                builder.Property(x => x.HourGetCar)
+                    .HasConversion<TimeOnlyDbConverter, TimeOnlyComparer>();
+
+                builder.Property(x => x.HourReturnCar)
+                    .HasConversion<TimeOnlyDbConverter, TimeOnlyComparer>();
+            });
         }
 
     }
+
     public class TimeOnlyDbConverter : ValueConverter<TimeOnly, TimeSpan>
     {
         public TimeOnlyDbConverter() : base(

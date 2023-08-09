@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalCarService;
 
@@ -11,9 +12,10 @@ using RentalCarService;
 namespace RentalCarService.Migrations
 {
     [DbContext(typeof(RentalCarsDBContext))]
-    partial class RentalCarsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230728145214_ChangingValueExtraPriceTodouble")]
+    partial class ChangingValueExtraPriceTodouble
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +24,7 @@ namespace RentalCarService.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("RentalCarService.Models.Booking", b =>
+            modelBuilder.Entity("RentalCarService.Models.Book", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -73,7 +75,7 @@ namespace RentalCarService.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("RentalCarService.Models.BookingExtra", b =>
+            modelBuilder.Entity("RentalCarService.Models.BookExtra", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -93,7 +95,7 @@ namespace RentalCarService.Migrations
 
                     b.HasIndex("ExtraId");
 
-                    b.ToTable("BookingExtra");
+                    b.ToTable("BookExtra");
                 });
 
             modelBuilder.Entity("RentalCarService.Models.Branchs", b =>
@@ -388,7 +390,7 @@ namespace RentalCarService.Migrations
                     b.ToTable("UserAddress");
                 });
 
-            modelBuilder.Entity("RentalCarService.Models.Booking", b =>
+            modelBuilder.Entity("RentalCarService.Models.Book", b =>
                 {
                     b.HasOne("RentalCarService.Models.Branchs", "BranchGet")
                         .WithMany()
@@ -415,9 +417,9 @@ namespace RentalCarService.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("RentalCarService.Models.BookingExtra", b =>
+            modelBuilder.Entity("RentalCarService.Models.BookExtra", b =>
                 {
-                    b.HasOne("RentalCarService.Models.Booking", "Book")
+                    b.HasOne("RentalCarService.Models.Book", "Book")
                         .WithMany("BookExtra")
                         .HasForeignKey("BookId");
 
@@ -498,7 +500,7 @@ namespace RentalCarService.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("RentalCarService.Models.Booking", b =>
+            modelBuilder.Entity("RentalCarService.Models.Book", b =>
                 {
                     b.Navigation("BookExtra");
                 });
