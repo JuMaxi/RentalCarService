@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentalCarService.Interfaces;
+using RentalCarService.Interfaces.Responses;
 using RentalCarService.Models;
+using RentalCarService.Models.Responses;
+using RentalCarService.Services.Responses;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,13 +16,19 @@ namespace RentalCarService.Services
     {
         private readonly RentalCarsDBContext _dbContext;
         IValidateBooking _validateBook;
+        IAvailabilityResponse _availabilityResponse;
 
-        public BookingService(RentalCarsDBContext dbContext, IValidateBooking validateBook)
+        public BookingService(RentalCarsDBContext dbContext, IValidateBooking validateBook, IAvailabilityResponse availabilityResponse)
         {
             _dbContext = dbContext;
             _validateBook = validateBook;
+            _availabilityResponse = availabilityResponse;
         }
 
+        public void Testing(Availability availability)
+        {
+            _availabilityResponse.AvailabilityFleet(availability);
+        }
         public void InsertNewBook(Booking booking)
         {
             _validateBook.Validate(booking);
@@ -153,7 +162,7 @@ namespace RentalCarService.Services
 
         private int CalculateDaysBook(Booking booking)
         {
-            if (booking.HourReturnCar <= booking.HourGetCar)
+            if (booking.ReturnDay.Hour <= booking.StartDay.Hour)
             {
                 return (booking.ReturnDay.Day - booking.StartDay.Day);
             }

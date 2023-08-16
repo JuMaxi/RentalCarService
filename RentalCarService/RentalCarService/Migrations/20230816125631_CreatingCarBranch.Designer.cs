@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalCarService;
 
@@ -11,9 +12,10 @@ using RentalCarService;
 namespace RentalCarService.Migrations
 {
     [DbContext(typeof(RentalCarsDBContext))]
-    partial class RentalCarsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230816125631_CreatingCarBranch")]
+    partial class CreatingCarBranch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,6 +43,12 @@ namespace RentalCarService.Migrations
 
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("HourGetCar")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("HourReturnCar")
+                        .HasColumnType("time");
 
                     b.Property<DateTime>("ReturnDay")
                         .HasColumnType("datetime2");
@@ -144,10 +152,10 @@ namespace RentalCarService.Migrations
                     b.Property<string>("AirConditioner")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("BranchId")
+                    b.Property<int?>("BrandId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BrandId")
+                    b.Property<int?>("CarBranchId")
                         .HasColumnType("int");
 
                     b.Property<int?>("CategoryId")
@@ -176,13 +184,31 @@ namespace RentalCarService.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BranchId");
-
                     b.HasIndex("BrandId");
+
+                    b.HasIndex("CarBranchId");
 
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Fleet");
+                });
+
+            modelBuilder.Entity("RentalCarService.Models.CarBranch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("CarBranch");
                 });
 
             modelBuilder.Entity("RentalCarService.Models.Categories", b =>
@@ -440,23 +466,32 @@ namespace RentalCarService.Migrations
 
             modelBuilder.Entity("RentalCarService.Models.Car", b =>
                 {
-                    b.HasOne("RentalCarService.Models.Branchs", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId");
-
                     b.HasOne("RentalCarService.Models.Brands", "Brand")
                         .WithMany()
                         .HasForeignKey("BrandId");
+
+                    b.HasOne("RentalCarService.Models.CarBranch", "CarBranch")
+                        .WithMany()
+                        .HasForeignKey("CarBranchId");
 
                     b.HasOne("RentalCarService.Models.Categories", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
 
-                    b.Navigation("Branch");
-
                     b.Navigation("Brand");
 
+                    b.Navigation("CarBranch");
+
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("RentalCarService.Models.CarBranch", b =>
+                {
+                    b.HasOne("RentalCarService.Models.Branchs", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.Navigation("Branch");
                 });
 
             modelBuilder.Entity("RentalCarService.Models.OpeningHours", b =>

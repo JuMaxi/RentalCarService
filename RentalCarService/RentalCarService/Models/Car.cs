@@ -15,6 +15,7 @@ namespace RentalCarService.Models
         public int TrunkSize { get; set; }
         public string NumberPlate { get; set; }
         public Categories Category { get; set; }
+        public Branchs Branch { get; set; }
 
     }
 }

@@ -22,6 +22,7 @@ namespace RentalCarService.Services
 
             Car.Brand = FindBrandIdDB(Car.Brand.Id);
             Car.Category = FindCategoryIdDB(Car.Category.Id);
+            Car.Branch = FindBranchFromDB(Car.Branch.Id);
 
             _dbContext.Add(Car);
             _dbContext.SaveChanges();
@@ -67,6 +68,11 @@ namespace RentalCarService.Services
         {
             Categories Category = _dbContext.Categories.Where(I => I.Id == Id).FirstOrDefault();
             return Category;
+        }
+        private Branchs FindBranchFromDB(int Id)
+        {
+            Branchs branch = _dbContext.Branches.Where(I => I.Id == Id).FirstOrDefault();
+            return branch;
         }
     }
 }

@@ -29,6 +29,7 @@
     <Compile Remove="Migrations\20230719113920_DeleteDBExtra.Designer.cs" />
     <Compile Remove="Migrations\20230719114933_AddingClassExtraa.cs" />
     <Compile Remove="Migrations\20230719114933_AddingClassExtraa.Designer.cs" />
+    <Compile Remove="Models\CarBranch.cs" />
     <Compile Remove="Models\Extra.cs" />
     <Compile Remove="Services\AccessDataBase.cs" />
     <Compile Remove="Services\PriceBandsService.cs" />

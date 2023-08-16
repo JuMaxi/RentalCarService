@@ -6,7 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RentalCarService.Interfaces;
+using RentalCarService.Interfaces.Responses;
 using RentalCarService.Services;
+using RentalCarService.Services.Responses;
 using RentalCarService.Validators;
 
 namespace RentalCarService
@@ -40,7 +42,7 @@ namespace RentalCarService
             services.AddTransient<IBookingService, BookingService>();
             services.AddTransient<IValidateBooking, ValidateBooking>();
             services.AddTransient<IAvailabilityService, AvailabilityService>();
-
+            services.AddTransient<IAvailabilityResponse, AvailabilityResponse>();
             services.AddControllers().AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());

@@ -15,7 +15,7 @@ namespace RentalCarService.Services
                 && candidate.StartDay <= booking.StartDay)
                 {
                     //add one hour to give time to clean the car.
-                    if (candidate.HourReturnCar.AddHours(1) >= booking.HourGetCar)
+                    if ((candidate.ReturnDay.Hour + 1) >= booking.StartDay.Hour)
                     {
                         if(amountCarsInCategory < nearbyBookings.Count)
                         {
