@@ -27,7 +27,7 @@ namespace RentalCarService.Services
 
         public void Testing(Availability availability)
         {
-            _availabilityResponse.AvailabilityFleet(availability);
+            _availabilityResponse.CompareAvailability(availability);
         }
         public void InsertNewBook(Booking booking)
         {

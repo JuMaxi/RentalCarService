@@ -7,6 +7,6 @@ namespace RentalCarService.Interfaces.Responses
 {
     public interface IAvailabilityResponse
     {
-        public List<Booking> AvailabilityFleet(Availability availability);
+        public List<Car> CompareAvailability(Availability availability);
     }
 }

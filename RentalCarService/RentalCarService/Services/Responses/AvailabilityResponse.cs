@@ -18,8 +18,9 @@ namespace RentalCarService.Services.Responses
             _dbcontext = dbContext;
         }
 
-        public List<Booking> AvailabilityFleet(Availability availability)
+        private List<Booking> AvailabilityFleet(Availability availability)
         {
+
             List<Booking> nearbyBookings = FindBookFromDB(availability);
 
             List<Booking> bookedCategories = new List<Booking>();
@@ -36,6 +37,39 @@ namespace RentalCarService.Services.Responses
                 }
             }
             return bookedCategories;
+        }
+
+        public List<Car> CompareAvailability(Availability availability)
+        {
+            List<Car> fleet = FindCarFromDB(availability.BranchGetCar);
+
+            List<Booking> bookedCategories = AvailabilityFleet(availability);
+
+            foreach(Booking c in bookedCategories)
+            {
+                foreach(Car carCategory in fleet)
+                {
+                    if(c.Category.Id == carCategory.Category.Id)
+                    {
+                        fleet.Remove(carCategory);
+                    }
+                }
+            }
+
+            return fleet;
+        }
+
+        private List<Car> FindCarFromDB(int id)
+        {
+            var fleet = _dbcontext.Fleet
+                .Include(c => c.Category)
+                .ThenInclude(p => p.PriceBands)
+                .Include(br => br.Branch)
+                .ThenInclude(o => o.OpeningHours)
+                .Where(b => b.Branch.Id == id)
+                .ToList();
+
+            return fleet;
         }
 
         private List<Booking> FindBookFromDB(Availability availability)
