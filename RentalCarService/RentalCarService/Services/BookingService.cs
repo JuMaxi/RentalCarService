@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentalCarService.Interfaces;
-using RentalCarService.Interfaces.Responses;
 using RentalCarService.Models;
+using RentalCarService.Models.Requests;
 using RentalCarService.Models.Responses;
-using RentalCarService.Services.Responses;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,18 +15,20 @@ namespace RentalCarService.Services
     {
         private readonly RentalCarsDBContext _dbContext;
         IValidateBooking _validateBook;
-        IAvailabilityResponse _availabilityResponse;
+        IAvailabilityService _availabilityService;
 
-        public BookingService(RentalCarsDBContext dbContext, IValidateBooking validateBook, IAvailabilityResponse availabilityResponse)
+        public BookingService(RentalCarsDBContext dbContext, IValidateBooking validateBook, IAvailabilityService availabilityService)
         {
             _dbContext = dbContext;
             _validateBook = validateBook;
-            _availabilityResponse = availabilityResponse;
+            _availabilityService = availabilityService;
         }
 
-        public void Testing(Availability availability)
+        public List<AvailabilityResponse> Testing(AvailabilityRequest availability)
         {
-            _availabilityResponse.CompareAvailability(availability);
+            _availabilityService.SaveListAvailableCategories(availability);
+
+            return null;
         }
         public void InsertNewBook(Booking booking)
         {

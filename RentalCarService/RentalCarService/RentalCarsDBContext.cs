@@ -37,6 +37,12 @@ namespace RentalCarService
             });
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            //optionsBuilder.LogTo(Console.WriteLine);
+            base.OnConfiguring(optionsBuilder);
+        }
+
     }
 
     public class TimeOnlyDbConverter : ValueConverter<TimeOnly, TimeSpan>

@@ -2,9 +2,9 @@
 
 namespace RentalCarService.Models.Responses
 {
-    public class Availability
+    public class AvailabilityResponse
     {
-        public int BranchGetCar { get; set; }
+        public Branchs Branch { get; set; }
         public Categories Category { get; set; }
         public DateTime StartDay { get; set; }
         public DateTime ReturnDay { get; set; }

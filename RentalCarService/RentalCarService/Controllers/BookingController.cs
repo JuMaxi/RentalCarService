@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentalCarService.Interfaces;
-using RentalCarService.Interfaces.Responses;
 using RentalCarService.Models;
+using RentalCarService.Models.Requests;
 using RentalCarService.Models.Responses;
+using System.Collections.Generic;
 
 namespace RentalCarService.Controllers
 {
@@ -24,9 +25,11 @@ namespace RentalCarService.Controllers
         }
 
         [HttpGet]
-        public void CheckAvailability([FromQuery] Availability availability)
+        public List<AvailabilityResponse> CheckAvailability([FromQuery] AvailabilityRequest availability)
         {
             BookService.Testing(availability);
+
+            return null;
         }
     }
 }

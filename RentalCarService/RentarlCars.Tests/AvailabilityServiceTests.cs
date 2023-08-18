@@ -36,7 +36,7 @@ namespace RentarlCars.Tests
                 ReturnDay = new DateTime(2023, 08, 31, 17, 00, 00),
             };
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing);
 
             IsAvailable.Should().BeTrue();
@@ -54,7 +54,7 @@ namespace RentarlCars.Tests
                 ReturnDay = new DateTime(2023, 09, 1, 16, 00, 00),
             };
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -73,7 +73,7 @@ namespace RentarlCars.Tests
             };
 
            
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -92,7 +92,7 @@ namespace RentarlCars.Tests
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -111,7 +111,7 @@ namespace RentarlCars.Tests
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -128,7 +128,7 @@ namespace RentarlCars.Tests
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing);
 
             IsAvailable.Should().BeTrue();
@@ -147,7 +147,7 @@ namespace RentarlCars.Tests
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -167,7 +167,7 @@ namespace RentarlCars.Tests
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -184,7 +184,7 @@ namespace RentarlCars.Tests
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing);
 
             IsAvailable.Should().BeTrue();
@@ -212,7 +212,7 @@ namespace RentarlCars.Tests
             };
 
             var existing = new List<Booking>() { existingBooking1, existingBooking2 };
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, existing);
 
             IsAvailable.Should().BeTrue();
@@ -228,7 +228,7 @@ namespace RentarlCars.Tests
                 ReturnDay = new DateTime(2023, 09, 10, 17, 00, 00)
             };
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, 2);
 
             IsAvailable.Should().BeTrue();
@@ -264,7 +264,7 @@ namespace RentarlCars.Tests
             var existing = new List<Booking>() { existingBooking1, existingBooking2, existingBooking3 };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, existing, 2);
 
             IsAvailable.Should().BeFalse();
