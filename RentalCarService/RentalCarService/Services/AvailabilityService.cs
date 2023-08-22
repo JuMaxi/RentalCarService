@@ -16,82 +16,38 @@ namespace RentalCarService.Services
         {
             _dbcontext = dbContext;
         }
-        //public bool ExistsAvailabilityForBooking(Booking candidate, List<Booking> nearbyBookings, int amountCarsInCategory = 1)
-        //{
-        //    foreach (Booking booking in nearbyBookings)
-        //    {
-        //        //Add 1 hour to give time to clean the car.
-        //        if (candidate.ReturnDay.AddHours(1) >= booking.StartDay
-        //        && candidate.StartDay <= booking.StartDay)
-        //        {
-        //            if (amountCarsInCategory < nearbyBookings.Count || amountCarsInCategory == 1)
-        //            {
-        //                return false;
-        //            }
-        //        }
-        //    }
-        //    return true;
-        //}
-
-        //public bool ExistsAvailabilityForBooking(Booking candidate, List<Booking> nearbyBookings, int amountCarsInCategory = 1)
-        //{
-        //    int amountBooked = 0;
-        //    foreach (Booking booking in nearbyBookings)
-        //    {
-        //        //Add 1 hour to give time to clean the car.
-        //        if (candidate.ReturnDay.AddHours(1) >= booking.StartDay
-        //        && candidate.StartDay <= booking.StartDay)
-        //        {
-        //            amountBooked++;
-
-        //            if (amountBooked == amountCarsInCategory)
-        //            {
-        //                return false;
-        //            }
-        //        }
-        //    }
-        //    return true;
-        //}
+        
 
         public bool ExistsAvailabilityForBooking(Booking candidate, List<Booking> nearbyBookings, int amountCarsInCategory = 1)
         {
-            DateTime dayCandidate = candidate.StartDay;
-
+            int coincidenceDate = 0;
             int amountBooked = 0;
-            int teste = 0;
 
-            while (dayCandidate <= candidate.ReturnDay)
+            for (int i = 0; i < nearbyBookings.Count; i++)
             {
-                for (int i = 0; i < nearbyBookings.Count; i++)
+                //Add 1 hour to give time to clean the car.
+                if (candidate.ReturnDay.AddHours(1) >= nearbyBookings[i].StartDay
+                    && candidate.StartDay <= nearbyBookings[i].StartDay)
                 {
-                    if (candidate.ReturnDay.AddHours(1) >= nearbyBookings[i].StartDay
-                        && candidate.StartDay <= nearbyBookings[i].StartDay)
+                    coincidenceDate++;
+
+                    for (int index = i + 1; index < nearbyBookings.Count; index++)
                     {
-                        amountBooked++;
-
-
-                        for (int index = i + 1; index < nearbyBookings.Count; index++)
+                        if (nearbyBookings[i].StartDay >= nearbyBookings[index].StartDay
+                            && nearbyBookings[i].StartDay <= nearbyBookings[index].ReturnDay)
                         {
-                            if (nearbyBookings[i].StartDay.Date >= nearbyBookings[index].StartDay.Date
-                                && nearbyBookings[i].StartDay.Date <= nearbyBookings[index].ReturnDay.Date)
-                            {
-                                amountBooked++;
-                            }
+                            coincidenceDate++;
                         }
-                        if (amountBooked > teste)
-                        {
-                            teste = amountBooked;
-                        }
-                        amountBooked = 0;
                     }
+                    if (coincidenceDate > amountBooked)
+                    {
+                        amountBooked = coincidenceDate;
+                    }
+                    coincidenceDate = 0;
                 }
-
-                candidate.StartDay = candidate.StartDay.AddDays(1);
-
-                dayCandidate = dayCandidate.AddDays(1);
             }
 
-            if (teste >= amountCarsInCategory)
+            if (amountBooked >= amountCarsInCategory)
             {
                 return false;
             }
