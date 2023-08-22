@@ -16,19 +16,84 @@ namespace RentalCarService.Services
         {
             _dbcontext = dbContext;
         }
+        //public bool ExistsAvailabilityForBooking(Booking candidate, List<Booking> nearbyBookings, int amountCarsInCategory = 1)
+        //{
+        //    foreach (Booking booking in nearbyBookings)
+        //    {
+        //        //Add 1 hour to give time to clean the car.
+        //        if (candidate.ReturnDay.AddHours(1) >= booking.StartDay
+        //        && candidate.StartDay <= booking.StartDay)
+        //        {
+        //            if (amountCarsInCategory < nearbyBookings.Count || amountCarsInCategory == 1)
+        //            {
+        //                return false;
+        //            }
+        //        }
+        //    }
+        //    return true;
+        //}
+
+        //public bool ExistsAvailabilityForBooking(Booking candidate, List<Booking> nearbyBookings, int amountCarsInCategory = 1)
+        //{
+        //    int amountBooked = 0;
+        //    foreach (Booking booking in nearbyBookings)
+        //    {
+        //        //Add 1 hour to give time to clean the car.
+        //        if (candidate.ReturnDay.AddHours(1) >= booking.StartDay
+        //        && candidate.StartDay <= booking.StartDay)
+        //        {
+        //            amountBooked++;
+
+        //            if (amountBooked == amountCarsInCategory)
+        //            {
+        //                return false;
+        //            }
+        //        }
+        //    }
+        //    return true;
+        //}
+
         public bool ExistsAvailabilityForBooking(Booking candidate, List<Booking> nearbyBookings, int amountCarsInCategory = 1)
         {
-            foreach (Booking booking in nearbyBookings)
+            DateTime dayCandidate = candidate.StartDay;
+
+            int amountBooked = 0;
+            int teste = 0;
+
+            while (dayCandidate <= candidate.ReturnDay)
             {
-                //Add 1 hour to give time to clean the car.
-                if (candidate.ReturnDay.AddHours(1) >= booking.StartDay
-                && candidate.StartDay <= booking.StartDay)
+                for (int i = 0; i < nearbyBookings.Count; i++)
                 {
-                    if (amountCarsInCategory < nearbyBookings.Count || amountCarsInCategory == 1)
+                    if (candidate.ReturnDay.AddHours(1) >= nearbyBookings[i].StartDay
+                        && candidate.StartDay <= nearbyBookings[i].StartDay)
                     {
-                        return false;
+                        amountBooked++;
+
+
+                        for (int index = i + 1; index < nearbyBookings.Count; index++)
+                        {
+                            if (nearbyBookings[i].StartDay.Date >= nearbyBookings[index].StartDay.Date
+                                && nearbyBookings[i].StartDay.Date <= nearbyBookings[index].ReturnDay.Date)
+                            {
+                                amountBooked++;
+                            }
+                        }
+                        if (amountBooked > teste)
+                        {
+                            teste = amountBooked;
+                        }
+                        amountBooked = 0;
                     }
                 }
+
+                candidate.StartDay = candidate.StartDay.AddDays(1);
+
+                dayCandidate = dayCandidate.AddDays(1);
+            }
+
+            if (teste >= amountCarsInCategory)
+            {
+                return false;
             }
             return true;
         }

@@ -269,5 +269,59 @@ namespace RentarlCars.Tests
 
             IsAvailable.Should().BeFalse();
         }
+
+        [Theory]
+        [InlineData(3, false)]
+        [InlineData(4, true)]
+        public void testing_timeline_scenario(int amountCars, bool result)
+        {
+            //06/09, 08:00 → 10/09, 17:00 → Indisponivel
+            Booking candidate = new Booking()
+            {
+                StartDay = new DateTime(2023, 08, 30, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 06, 17, 00, 00)
+            };
+
+            List<Booking> existingBookings = new List<Booking>()
+            {
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 1, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 3, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 4, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 5, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 6, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 6, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 2, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 3, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 4, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 5, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 3, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 4, 17, 00, 00)
+                }
+            };
+
+
+            AvailabilityService service = new AvailabilityService(null);
+            bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, existingBookings, amountCars);
+
+            IsAvailable.Should().Be(result);
+        }
+
     }
 }
