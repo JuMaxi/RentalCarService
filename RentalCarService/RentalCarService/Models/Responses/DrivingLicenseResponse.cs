@@ -2,7 +2,7 @@
 
 namespace RentalCarService.Models.Responses
 {
-    public class DrivingLicense
+    public class DrivingLicenseResponse
     {
         public string Number { get; set; }
         public string IssuingCountry { get; set; }

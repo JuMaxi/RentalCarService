@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
+using RentalCarService.Models.Requests;
 using RentalCarService.Models.Responses;
 using System.Collections.Generic;
 
@@ -10,39 +11,73 @@ namespace RentalCarService.Controllers
     [Route("[Controller]")]
     public class UserController : ControllerBase
     {
-        IUserService UserService;
+        readonly IUserService _userService;
         public UserController(IUserService userService)
         {
-            UserService = userService;
+            _userService = userService;
         }
 
         [HttpPost]
-        public void InsertNewUserDB(User User)
+        public void InsertNewUserDB(UserRequest userRequest)
         {
-            UserService.InserNewUser(User);
+            User user = ConvertToUser(userRequest);
+            _userService.InserNewUser(user);
         }
 
         [HttpGet]
         public List<UserResponse> ReadUsersFromDB()
         {
-            List<User> Users = UserService.ReadUsersFromDB();
-            List<UserResponse> usersResponse = Convert(Users);
+            List<User> Users = _userService.ReadUsersFromDB();
+            List<UserResponse> usersResponse = ConvertToUserResponse(Users);
             return usersResponse;
         }
 
         [HttpDelete]
         public void DeleteUsersFromDB([FromQuery] int Id)
         {
-            UserService.DeleteUser(Id);
+            _userService.DeleteUser(Id);
         }
 
         [HttpPut]
         public void UpdateUser(User User)
         {
-            UserService.UpdateUser(User);
+            _userService.UpdateUser(User);
         }
+        private User ConvertToUser(UserRequest userRequest)
+        {
+            User user = new User();
+            user.Name= userRequest.Name;
+            user.Phone= userRequest.Phone;
+            user.IdentityDocument = userRequest.IdentityDocument;
+            
+            UserAddress address = new UserAddress();
+            address.Street = userRequest.Address.Street;
+            address.Number = userRequest.Address.Number;
+            address.Neighborhood= userRequest.Address.Neighborhood;
+            address.City= userRequest.Address.City;
+            address.State= userRequest.Address.State;
+            address.PostalCode= userRequest.Address.PostalCode;
+            
+            Countries country = new Countries();
+            country.Id = userRequest.Address.Country;
+            address.Country = country;
 
-        private List<UserResponse> Convert(List<User> users)
+            user.Address= address;
+            user.Birthday = userRequest.Birthday;
+            country.Id = userRequest.Nationality;
+            user.Nationality = country;
+            user.Gender= userRequest.Gender;
+            user.CNH = userRequest.DriverLicense.Number;
+            country.Id = userRequest.DriverLicense.IssuingCountry;
+            user.CountryCNH= country;
+            user.DateCNH= userRequest.DriverLicense.IssuingDate;
+            user.Email= userRequest.Email;
+            user.Password= userRequest.Password;
+            
+            return user;
+        }
+       
+        private List<UserResponse> ConvertToUserResponse(List<User> users)
         {
             List<UserResponse> usersResponse = new List<UserResponse>();
 
@@ -69,7 +104,7 @@ namespace RentalCarService.Controllers
                 u.Nationality= user.Nationality.Country;
                 u.Gender= user.Gender;
 
-                DrivingLicense drivingLicense = new DrivingLicense();
+                DrivingLicenseResponse drivingLicense = new DrivingLicenseResponse();
 
                 drivingLicense.Number= user.CNH;
                 drivingLicense.IssuingCountry = user.CountryCNH.Country;
