@@ -12,18 +12,14 @@ namespace RentarlCars.Tests
         {
             Booking existingBooking1 = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 1),
-                ReturnDay = new DateTime(2023, 09, 3),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 1, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 3, 17, 00, 00),
             };
 
             Booking existingBooking2 = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 6),
-                ReturnDay = new DateTime(2023, 09, 6),
-                HourGetCar = new TimeOnly(09, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 6, 09, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 6, 17, 00, 00),
             };
 
             _existing = new List<Booking>() { existingBooking1, existingBooking2 };
@@ -36,13 +32,11 @@ namespace RentarlCars.Tests
             //30/08, 08:00 → 31/08, 17:00 → Disponivel
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 08, 30),
-                ReturnDay = new DateTime(2023, 08, 31),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(17,00)
+                StartDay = new DateTime(2023, 08, 30, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 08, 31, 17, 00, 00),
             };
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing);
 
             IsAvailable.Should().BeTrue();
@@ -56,13 +50,11 @@ namespace RentarlCars.Tests
             //30/08, 08:00 → 01/09, 16:00 → Indisponivel
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 08, 30),
-                ReturnDay = new DateTime(2023, 09, 1),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(16, 00)
+                StartDay = new DateTime(2023, 08, 30, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 1, 16, 00, 00),
             };
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -76,14 +68,12 @@ namespace RentarlCars.Tests
             //30/08, 08:00 → 04/09, 15:00 → Indisponivel
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 08, 30),
-                ReturnDay = new DateTime(2023, 09, 4),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(15, 00)
+                StartDay = new DateTime(2023, 08, 30, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 4, 15, 00, 00),
             };
 
            
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -97,14 +87,12 @@ namespace RentarlCars.Tests
             //30/08, 08:00 → 06/09, 14:00 → Indisponivel
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 08, 30),
-                ReturnDay = new DateTime(2023, 09, 6),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(14, 00)
+                StartDay = new DateTime(2023, 08, 30, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 6, 14, 00, 00),
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -118,14 +106,12 @@ namespace RentarlCars.Tests
             //30/08, 08:00 → 08/09, 17:00 → Indisponivel
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 08, 30),
-                ReturnDay = new DateTime(2023, 09, 8),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 08, 30, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 8, 17, 00, 00)
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -137,14 +123,12 @@ namespace RentarlCars.Tests
             //04/09, 08:00 → 05/09, 17:00 → Disponivel
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 4),
-                ReturnDay = new DateTime(2023, 09, 5),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 4, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 5, 17, 00, 00),
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing);
 
             IsAvailable.Should().BeTrue();
@@ -158,14 +142,12 @@ namespace RentarlCars.Tests
             //04/09, 08:00 → 06/09, 15:00 → Indisponivel
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 4),
-                ReturnDay = new DateTime(2023, 09, 6),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(15, 00)
+                StartDay = new DateTime(2023, 09, 4, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 6, 15, 00, 00),
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -180,14 +162,12 @@ namespace RentarlCars.Tests
             //06/09, 08:00 → 10/09, 17:00 → Indisponivel
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 6),
-                ReturnDay = new DateTime(2023, 09, 10),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 6, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 10, 17, 00, 00)
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 
             IsAvailable.Should().Be(result);
@@ -199,14 +179,12 @@ namespace RentarlCars.Tests
             //07/09, 08:00 → 09/09, 17:00 → Disponivel
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 7),
-                ReturnDay = new DateTime(2023, 09, 9),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 7, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 9, 17, 00, 00)
             };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing);
 
             IsAvailable.Should().BeTrue();
@@ -217,30 +195,24 @@ namespace RentarlCars.Tests
         {
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 3),
-                ReturnDay = new DateTime(2023, 09, 4),
-                HourGetCar = new TimeOnly(10, 00),
-                HourReturnCar = new TimeOnly(15, 00)
+                StartDay = new DateTime(2023, 09, 3, 10, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 4, 15, 00, 00),
             };
 
             Booking existingBooking1 = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 1),
-                ReturnDay = new DateTime(2023, 09, 3),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(08, 00)
+                StartDay = new DateTime(2023, 09, 1, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 3, 08, 00, 00)
             };
 
             Booking existingBooking2 = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 4),
-                ReturnDay = new DateTime(2023, 09, 5),
-                HourGetCar = new TimeOnly(17, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 4, 17, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 5, 17, 00, 00)
             };
 
             var existing = new List<Booking>() { existingBooking1, existingBooking2 };
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, existing);
 
             IsAvailable.Should().BeTrue();
@@ -252,13 +224,11 @@ namespace RentarlCars.Tests
             //06/09, 08:00 → 10/09, 17:00 → Disponivel (2 cars)
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 6),
-                ReturnDay = new DateTime(2023, 09, 10),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 6, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 10, 17, 00, 00)
             };
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, 2);
 
             IsAvailable.Should().BeTrue();
@@ -269,43 +239,89 @@ namespace RentarlCars.Tests
         {
             Booking candidate = new Booking()
             {
-                StartDay = new DateTime(2023, 08, 30),
-                ReturnDay = new DateTime(2023, 09, 6),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(14, 00)
+                StartDay = new DateTime(2023, 08, 30, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 6, 14, 00, 00),
             };
 
             Booking existingBooking1 = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 1),
-                ReturnDay = new DateTime(2023, 09, 3),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 1, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 3, 17, 00, 00)
             };
 
             Booking existingBooking2 = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 1),
-                ReturnDay = new DateTime(2023, 09, 3),
-                HourGetCar = new TimeOnly(08, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 1, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 3, 17, 00, 00)
             };
 
             Booking existingBooking3 = new Booking()
             {
-                StartDay = new DateTime(2023, 09, 6),
-                ReturnDay = new DateTime(2023, 09, 6),
-                HourGetCar = new TimeOnly(09, 00),
-                HourReturnCar = new TimeOnly(17, 00)
+                StartDay = new DateTime(2023, 09, 6, 09, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 6, 17, 00, 00),
             };
 
             var existing = new List<Booking>() { existingBooking1, existingBooking2, existingBooking3 };
 
 
-            AvailabilityService service = new AvailabilityService();
+            AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, existing, 2);
 
             IsAvailable.Should().BeFalse();
         }
+
+        [Theory]
+        [InlineData(3, false)]
+        [InlineData(4, true)]
+        public void testing_timeline_scenario(int amountCars, bool result)
+        {
+            //06/09, 08:00 → 10/09, 17:00 → Indisponivel
+            Booking candidate = new Booking()
+            {
+                StartDay = new DateTime(2023, 08, 30, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 06, 17, 00, 00)
+            };
+
+            List<Booking> existingBookings = new List<Booking>()
+            {
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 1, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 3, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 4, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 5, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 6, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 6, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 2, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 3, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 4, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 5, 17, 00, 00)
+                },
+                new Booking()
+                {
+                    StartDay = new DateTime(2023, 09, 3, 08, 00, 00),
+                    ReturnDay = new DateTime(2023, 09, 4, 17, 00, 00)
+                }
+            };
+
+
+            AvailabilityService service = new AvailabilityService(null);
+            bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, existingBookings, amountCars);
+
+            IsAvailable.Should().Be(result);
+        }
+
     }
 }

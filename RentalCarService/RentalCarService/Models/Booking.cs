@@ -15,7 +15,6 @@ namespace RentalCarService.Models
         public double ValueToPay { get; set; }
         public DateTime StartDay { get; set; }
         public DateTime ReturnDay { get; set; }
-        public TimeOnly HourGetCar { get; set; }
-        public TimeOnly HourReturnCar { get; set; } 
+        
     }
 }

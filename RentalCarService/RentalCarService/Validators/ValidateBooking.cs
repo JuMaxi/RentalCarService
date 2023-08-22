@@ -87,7 +87,7 @@ namespace RentalCarService.Validators
                 {
                     close = false;
 
-                    if (booking.HourGetCar < h.Opens)
+                    if (booking.StartDay.Hour < h.Opens.Hour)
                     {
                         throw new Exception("This branch opens at " + h.Opens + " you can't get the car before this time.");
                     }
@@ -115,7 +115,7 @@ namespace RentalCarService.Validators
                 {
                     close = false;
 
-                    if (booking.HourReturnCar > h.Closes)
+                    if (booking.ReturnDay.Hour > h.Closes.Hour)
                     {
                         throw new Exception("This branch closes at " + h.Closes + " you can't return the car after this time.");
                     }

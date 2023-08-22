@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
+using RentalCarService.Models.Requests;
+using RentalCarService.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,13 +15,47 @@ namespace RentalCarService.Services
     {
         private readonly RentalCarsDBContext _dbContext;
         IValidateBooking _validateBook;
+        IAvailabilityService _availabilityService;
 
-        public BookingService(RentalCarsDBContext dbContext, IValidateBooking validateBook)
+        public BookingService(RentalCarsDBContext dbContext, IValidateBooking validateBook, IAvailabilityService availabilityService)
         {
             _dbContext = dbContext;
             _validateBook = validateBook;
+            _availabilityService = availabilityService;
         }
 
+        public List<AvailabilityResponse> ReturnAvailabilityCategories(AvailabilityRequest availability)
+        {
+            List<Categories> categories = _availabilityService.SaveListAvailableCategories(availability);
+            List<AvailabilityResponse> availabilityCategories = new List<AvailabilityResponse>();
+
+            Branchs branch = FindBranchDB(availability.BranchGetCar);
+
+
+            foreach (Categories category in categories)
+            {
+                AvailabilityResponse av = new AvailabilityResponse();
+
+                av.Branch = branch.Name;
+                av.Category = category.Description;
+                av.StartDay = availability.StartDay;
+                av.ReturnDay = availability.ReturnDay;
+
+                Booking booking = new Booking();
+
+                booking.Category = category;
+                booking.StartDay = availability.StartDay;
+                booking.ReturnDay = availability.ReturnDay;
+
+                double price = ValueToPayPerDay(booking);
+
+                av.Estimative = price;
+
+                availabilityCategories.Add(av);
+            }
+
+            return availabilityCategories;
+        }
         public void InsertNewBook(Booking booking)
         {
             _validateBook.Validate(booking);
@@ -153,7 +189,7 @@ namespace RentalCarService.Services
 
         private int CalculateDaysBook(Booking booking)
         {
-            if (booking.HourReturnCar <= booking.HourGetCar)
+            if (booking.ReturnDay.Hour <= booking.StartDay.Hour)
             {
                 return (booking.ReturnDay.Day - booking.StartDay.Day);
             }
@@ -162,6 +198,7 @@ namespace RentalCarService.Services
                 return (booking.ReturnDay.Day - booking.StartDay.Day) + 1;
             }
         }
+
 
     }
 }

@@ -35,15 +35,12 @@ namespace RentalCarService
                 builder.Property(x => x.Closes)
                     .HasConversion<TimeOnlyDbConverter, TimeOnlyComparer>();
             });
+        }
 
-            modelBuilder.Entity<Booking>(builder =>
-            {
-                builder.Property(x => x.HourGetCar)
-                    .HasConversion<TimeOnlyDbConverter, TimeOnlyComparer>();
-
-                builder.Property(x => x.HourReturnCar)
-                    .HasConversion<TimeOnlyDbConverter, TimeOnlyComparer>();
-            });
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            //optionsBuilder.LogTo(Console.WriteLine);
+            base.OnConfiguring(optionsBuilder);
         }
 
     }
