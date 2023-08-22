@@ -8,6 +8,6 @@ namespace RentalCarService.Interfaces
     public interface IBookingService
     {
         public void InsertNewBook(Booking book);
-        public List<AvailabilityResponse> Testing(AvailabilityRequest availability);
+        public List<AvailabilityResponse> ReturnAvailabilityCategories(AvailabilityRequest availability);
     }
 }

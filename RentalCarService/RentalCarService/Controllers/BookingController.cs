@@ -25,11 +25,11 @@ namespace RentalCarService.Controllers
         }
 
         [HttpGet]
-        public List<AvailabilityResponse> CheckAvailability([FromQuery] AvailabilityRequest availability)
+        public List<AvailabilityResponse> ReturnAvailabilityCategories([FromQuery] AvailabilityRequest availability)
         {
-            BookService.Testing(availability);
+            List<AvailabilityResponse> availabilityCategories =  BookService.ReturnAvailabilityCategories(availability);
 
-            return null;
+            return availabilityCategories;
         }
     }
 }

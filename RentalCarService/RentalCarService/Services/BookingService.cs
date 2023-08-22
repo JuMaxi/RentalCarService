@@ -24,11 +24,37 @@ namespace RentalCarService.Services
             _availabilityService = availabilityService;
         }
 
-        public List<AvailabilityResponse> Testing(AvailabilityRequest availability)
+        public List<AvailabilityResponse> ReturnAvailabilityCategories(AvailabilityRequest availability)
         {
-            _availabilityService.SaveListAvailableCategories(availability);
+            List<Categories> categories = _availabilityService.SaveListAvailableCategories(availability);
+            List<AvailabilityResponse> availabilityCategories = new List<AvailabilityResponse>();
 
-            return null;
+            Branchs branch = FindBranchDB(availability.BranchGetCar);
+
+
+            foreach (Categories category in categories)
+            {
+                AvailabilityResponse av = new AvailabilityResponse();
+
+                av.Branch = branch.Name;
+                av.Category = category.Description;
+                av.StartDay = availability.StartDay;
+                av.ReturnDay = availability.ReturnDay;
+
+                Booking booking = new Booking();
+
+                booking.Category = category;
+                booking.StartDay = availability.StartDay;
+                booking.ReturnDay = availability.ReturnDay;
+
+                double price = ValueToPayPerDay(booking);
+
+                av.Estimative = price;
+
+                availabilityCategories.Add(av);
+            }
+
+            return availabilityCategories;
         }
         public void InsertNewBook(Booking booking)
         {
