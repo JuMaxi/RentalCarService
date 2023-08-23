@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
+using RentalCarService.Models.Requests;
 using System.Collections.Generic;
 
 namespace RentalCarService.Controllers
@@ -16,9 +17,10 @@ namespace RentalCarService.Controllers
         }
 
         [HttpPost]
-        public void InsertNewCarDB(Car NewCar)
+        public void InsertNewCarDB(CarRequest carRequest)
         {
-            CarService.InsertNewCar(NewCar);
+            Car newCar= ConvertCarRequest(carRequest);
+            CarService.InsertNewCar(newCar);
         }
         [HttpGet]
         public List<Car> ReadFleetFromDB()
@@ -37,6 +39,34 @@ namespace RentalCarService.Controllers
         public void UpdataCarDb(Car Car)
         {
             CarService.UpdateCarFleet(Car);
+        }
+
+        private Car ConvertCarRequest(CarRequest carRequest)
+        {
+            Car car= new Car();
+
+            Brands brand= new Brands();
+            brand.Id= carRequest.BrandId;
+            car.Brand= brand;
+
+            car.Model= carRequest.Model;
+            car.Year= carRequest.Year;
+            car.Transmission= carRequest.Transmission;
+            car.Doors= carRequest.Doors;
+            car.Seats= carRequest.Seats;
+            car.AirConditioner= carRequest.AirConditioner;
+            car.TrunkSize= carRequest.TrunkSize;
+            car.NumberPlate= carRequest.NumberPlate;
+
+            Categories category= new Categories();
+            category.Id= carRequest.CategoryId;
+            car.Category= category;
+
+            Branchs branch= new Branchs();
+            branch.Id=carRequest.BranchId;
+            car.Branch= branch;
+
+            return car;
         }
     }
 }

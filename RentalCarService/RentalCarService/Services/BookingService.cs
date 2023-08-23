@@ -199,7 +199,21 @@ namespace RentalCarService.Services
             }
         }
 
+        public List<Booking> ReadBookingsFromDB()
+        {
+            List<Booking> bookings = new List<Booking>();
 
+            bookings = _dbContext.Books
+                .Include(u => u.User)
+                .Include(c => c.Category)
+                .Include(b => b.BranchGet)
+                .Include(b => b.BranchReturn)
+                .Include(be => be.BookExtra)
+                .ThenInclude(e => e.Extra)
+                .ToList();
+
+            return bookings;
+        }
     }
 }
 

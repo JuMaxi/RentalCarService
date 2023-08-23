@@ -9,5 +9,6 @@ namespace RentalCarService.Interfaces
     {
         public void InsertNewBook(Booking book);
         public List<AvailabilityResponse> ReturnAvailabilityCategories(AvailabilityRequest availability);
+        public List<Booking> ReadBookingsFromDB();
     }
 }
