@@ -12,7 +12,7 @@ namespace RentalCarService.Controllers
     public class CarController : ControllerBase
     {
         ICarService CarService;
-        public CarController(ICarService carservice) 
+        public CarController(ICarService carservice)
         {
             CarService = carservice;
         }
@@ -20,7 +20,7 @@ namespace RentalCarService.Controllers
         [HttpPost]
         public void InsertNewCarDB(CarRequest carRequest)
         {
-            Car newCar= ConvertCarRequest(carRequest);
+            Car newCar = ConvertCarRequest(carRequest);
             CarService.InsertNewCar(newCar);
         }
 
@@ -28,7 +28,7 @@ namespace RentalCarService.Controllers
         public List<CarResponse> ReadFleetFromDB()
         {
             List<Car> Fleet = CarService.ReadFleetFromDB();
-            List<CarResponse> fleetResponse= ConvertCarResponse(Fleet);
+            List<CarResponse> fleetResponse = ConvertCarResponse(Fleet);
             return fleetResponse;
         }
 
@@ -38,10 +38,13 @@ namespace RentalCarService.Controllers
             CarService.DeleteCarFleet(Id);
         }
 
-        [HttpPut]
-        public void UpdataCarDb(Car Car)
+        [HttpPut("{id}")]
+        public void UpdataCarDb(CarRequest carRequest, int id)
         {
-            CarService.UpdateCarFleet(Car);
+            Car car= ConvertCarRequest(carRequest);
+            car.Id= id;
+
+            CarService.UpdateCarFleet(car);
         }
 
         private Car ConvertCarRequest(CarRequest carRequest)

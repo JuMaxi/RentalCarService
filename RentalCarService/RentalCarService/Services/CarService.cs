@@ -59,6 +59,7 @@ namespace RentalCarService.Services
             toUpdate.TrunkSize = Car.TrunkSize;
             toUpdate.NumberPlate = Car.NumberPlate;
             toUpdate.Category = FindCategoryIdDB(Car.Category.Id);
+            toUpdate.Branch = FindBranchFromDB(Car.Branch.Id);
 
             _dbContext.SaveChanges();
         }
