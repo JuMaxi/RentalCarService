@@ -30,9 +30,12 @@ namespace RentalCarService.Services
 
         public List<Car> ReadFleetFromDB()
         {
-            var Fleet = _dbContext.Fleet.Include(B => B.Brand).ToList();
-            Fleet = _dbContext.Fleet.Include(C => C.Category.PriceBands).ToList();
-         
+            var Fleet = _dbContext.Fleet
+                .Include(B => B.Brand)
+                .Include(C => C.Category.PriceBands)
+                .Include(branch => branch.Branch)
+                .ToList();
+
             return Fleet;
         }
         public void DeleteCarFleet(int Id)

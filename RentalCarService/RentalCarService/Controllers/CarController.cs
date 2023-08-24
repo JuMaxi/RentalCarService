@@ -2,6 +2,7 @@
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using RentalCarService.Models.Requests;
+using RentalCarService.Models.Responses;
 using System.Collections.Generic;
 
 namespace RentalCarService.Controllers
@@ -22,11 +23,13 @@ namespace RentalCarService.Controllers
             Car newCar= ConvertCarRequest(carRequest);
             CarService.InsertNewCar(newCar);
         }
+
         [HttpGet]
-        public List<Car> ReadFleetFromDB()
+        public List<CarResponse> ReadFleetFromDB()
         {
             List<Car> Fleet = CarService.ReadFleetFromDB();
-            return Fleet;
+            List<CarResponse> fleetResponse= ConvertCarResponse(Fleet);
+            return fleetResponse;
         }
 
         [HttpDelete]
@@ -67,6 +70,32 @@ namespace RentalCarService.Controllers
             car.Branch= branch;
 
             return car;
+        }
+
+        private List<CarResponse> ConvertCarResponse(List<Car> cars)
+        {
+            List<CarResponse> carsResponse= new List<CarResponse>();
+
+            foreach(Car c in cars)
+            {
+                CarResponse car= new CarResponse();
+
+                car.Brand= c.Brand.Brand;
+                car.Model= c.Model;
+                car.Year= c.Year;
+                car.Transmission= c.Transmission;
+                car.Doors= c.Doors;
+                car.Seats= c.Seats;
+                car.AirConditioner= c.AirConditioner;
+                car.TrunkSize= c.TrunkSize;
+                car.NumberPlate= c.NumberPlate;
+                car.Category = c.Category.Description;
+                car.Branch = c.Branch.Name;
+
+                carsResponse.Add(car);
+            }
+
+            return carsResponse;
         }
     }
 }
