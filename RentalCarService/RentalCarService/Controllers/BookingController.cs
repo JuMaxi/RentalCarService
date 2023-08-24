@@ -11,24 +11,26 @@ namespace RentalCarService.Controllers
     [Route("[Controller]")]
     public class BookingController : ControllerBase
     {
-        readonly IBookingService BookService;
+        readonly IBookingService _bookService;
+        readonly IBookingMapper _bookingMapper;
 
-        public BookingController(IBookingService bookService)
+        public BookingController(IBookingService bookService, IBookingMapper bookingMapper)
         {
-            BookService = bookService;
+            _bookService = bookService;
+            _bookingMapper = bookingMapper;
         }
 
         [HttpPost]
         public void InsertNewBook(BookingRequest bookingRequest)
         {
-            Booking booking = ConvertToBooking(bookingRequest);
-            BookService.InsertNewBook(booking);
+            Booking booking = _bookingMapper.ConvertToBooking(bookingRequest);
+            _bookService.InsertNewBook(booking);
         }
 
         [HttpGet("availability")]
         public List<AvailabilityResponse> ReturnAvailabilityCategories([FromQuery] AvailabilityRequest availability)
         {
-            List<AvailabilityResponse> availabilityCategories = BookService.ReturnAvailabilityCategories(availability);
+            List<AvailabilityResponse> availabilityCategories = _bookService.ReturnAvailabilityCategories(availability);
 
             return availabilityCategories;
         }
@@ -36,87 +38,13 @@ namespace RentalCarService.Controllers
         [HttpGet]
         public List<BookingResponse> ReadBookingsFromDB()
         {
-            List<Booking> bookings = BookService.ReadBookingsFromDB();
+            List<Booking> bookings = _bookService.ReadBookingsFromDB();
 
-            List<BookingResponse> bookingsResponse = ConvertToBookingResponse(bookings);
-
-            return bookingsResponse;
-        }
-
-        private List<BookingResponse> ConvertToBookingResponse(List<Booking> bookings)
-        {
-            List<BookingResponse> bookingsResponse = new List<BookingResponse>();
-            foreach (Booking booking in bookings)
-            {
-                BookingResponse b = new BookingResponse();
-
-                b.Code = booking.Code;
-                b.User = booking.User.Name;
-                b.Category = booking.Category.Description;
-                b.BranchGet = booking.BranchGet.Name;
-                b.BranchReturn = booking.BranchReturn.Name;
-
-                List<ExtraResponse> extrasResponse = new List<ExtraResponse>();
-
-                foreach (BookingExtra be in booking.BookExtra)
-                {
-                    ExtraResponse extraR = new ExtraResponse();
-
-                    extraR.Service = be.Extra.Service;
-                    extraR.DayCost = be.Extra.DayCost;
-                    extraR.FixedCost = be.Extra.FixedCost;
-
-                    extrasResponse.Add(extraR);
-                }
-
-                b.Extras = extrasResponse;
-                b.Total = booking.ValueToPay;
-                b.Start = booking.StartDay;
-                b.Return = booking.ReturnDay;
-
-                bookingsResponse.Add(b);
-            }
+            List<BookingResponse> bookingsResponse = _bookingMapper.ConvertToBookingResponse(bookings);
 
             return bookingsResponse;
         }
-        private Booking ConvertToBooking(BookingRequest bookingRequest)
-        {
-            Booking booking = new Booking();
 
-            User user = new User();
-            user.Id = bookingRequest.UserId;
-            booking.User = user;
-
-            Categories category = new Categories();
-            category.Id = bookingRequest.CategoryId;
-            booking.Category = category;
-
-            Branchs branch = new Branchs();
-            branch.Id = bookingRequest.BranchGetId;
-            booking.BranchGet = branch;
-            branch.Id = bookingRequest.BranchReturnId;
-            booking.BranchReturn = branch;
-
-            List<BookingExtra> extras = new List<BookingExtra>();
-
-            foreach (int id in bookingRequest.Extras)
-            {
-                BookingExtra bookingExtra = new BookingExtra();
-
-                Extraa extra = new Extraa();
-                extra.Id = id;
-
-                bookingExtra.Extra = extra;
-
-                extras.Add(bookingExtra);
-            }
-
-            booking.BookExtra = extras;
-
-            booking.StartDay = bookingRequest.Start;
-            booking.ReturnDay = bookingRequest.Return;
-
-            return booking;
-        }
+        
     }
 }
