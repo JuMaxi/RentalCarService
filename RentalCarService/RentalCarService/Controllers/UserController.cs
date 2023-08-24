@@ -38,10 +38,14 @@ namespace RentalCarService.Controllers
             _userService.DeleteUser(Id);
         }
 
-        [HttpPut]
-        public void UpdateUser(User User)
+        [HttpPut("{id}")]
+        public void UpdateUser(UserRequest userRequest, int id)
         {
-            _userService.UpdateUser(User);
+            User user= ConvertToUser(userRequest);
+
+            user.Id= id;
+
+            _userService.UpdateUser(user);
         }
         private User ConvertToUser(UserRequest userRequest)
         {
