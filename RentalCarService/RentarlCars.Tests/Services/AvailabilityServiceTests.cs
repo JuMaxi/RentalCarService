@@ -2,7 +2,7 @@
 using RentalCarService.Models;
 using RentalCarService.Services;
 
-namespace RentarlCars.Tests
+namespace RentarlCars.Tests.Services
 {
     public class AvailabilityServiceTests
     {
@@ -72,7 +72,7 @@ namespace RentarlCars.Tests
                 ReturnDay = new DateTime(2023, 09, 4, 15, 00, 00),
             };
 
-           
+
             AvailabilityService service = new AvailabilityService(null);
             bool IsAvailable = service.ExistsAvailabilityForBooking(candidate, _existing, amountCars);
 

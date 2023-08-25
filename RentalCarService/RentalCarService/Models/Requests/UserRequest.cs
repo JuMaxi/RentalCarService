@@ -4,7 +4,6 @@ namespace RentalCarService.Models.Requests
 {
     public class UserRequest
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
         public string IdentityDocument { get; set; }

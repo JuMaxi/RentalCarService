@@ -21,7 +21,7 @@ namespace RentalCarService.Mappers
             address.Neighborhood = userRequest.Address.Neighborhood;
             address.City = userRequest.Address.City;
             address.State = userRequest.Address.State;
-            address.PostalCode = userRequest.Address.PostalCode;
+            address.PostalCode = userRequest.Address.PostCode;
 
             Countries country = new Countries();
             country.Id = userRequest.Address.Country;
@@ -29,10 +29,14 @@ namespace RentalCarService.Mappers
 
             user.Address = address;
             user.Birthday = userRequest.Birthday;
+
+            country = new();
             country.Id = userRequest.Nationality;
             user.Nationality = country;
             user.Gender = userRequest.Gender;
             user.CNH = userRequest.DriverLicense.Number;
+
+            country = new();
             country.Id = userRequest.DriverLicense.IssuingCountry;
             user.CountryCNH = country;
             user.DateCNH = userRequest.DriverLicense.IssuingDate;
@@ -61,7 +65,7 @@ namespace RentalCarService.Mappers
                 addressResponse.Neighborhood = user.Address.Neighborhood;
                 addressResponse.City = user.Address.City;
                 addressResponse.State = user.Address.State;
-                addressResponse.PostalCode = user.Address.PostalCode;
+                addressResponse.PostCode = user.Address.PostalCode;
                 addressResponse.Country = user.Address.Country.Country;
                 u.Address = addressResponse;
 
