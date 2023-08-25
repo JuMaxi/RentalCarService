@@ -10,7 +10,7 @@ namespace RentalCarService.Models.Responses
         public string Category { get; set; }
         public string BranchGet { get; set; }
         public string BranchReturn { get; set; }
-        public List<ExtraResponse> Extras { get; set; } = new List<ExtraResponse>();
+        public List<ExtraResponse> Extras { get; set; }
         public double Total { get; set; }
         public DateTime Start { get; set; }
         public DateTime Return { get; set; }

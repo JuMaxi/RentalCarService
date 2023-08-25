@@ -12,17 +12,19 @@ namespace RentarlCars.Tests.Mappers
         [Fact]
         public void Checking_if_BookingRequest_is_Equal_Booking()
         {
-            BookingRequest bookingRequest = new BookingRequest();
-            bookingRequest.UserId = 2;
-            bookingRequest.CategoryId = 3;
-            bookingRequest.BranchGetId = 4;
-            bookingRequest.BranchReturnId = 5;
+            BookingRequest bookingRequest = new()
+            {
+                UserId = 2,
+                CategoryId = 3,
+                BranchGetId = 4,
+                BranchReturnId = 5,
+                Start = new DateTime(2023, 08, 25),
+                Return = new DateTime(2023, 08, 27)
+            };
             bookingRequest.Extras.Add(6);
             bookingRequest.Extras.Add(7);
-            bookingRequest.Start = new DateTime(2023, 08, 25);
-            bookingRequest.Return = new DateTime(2023, 08, 27);
 
-            BookingMapper bookingMapper = new BookingMapper();
+            BookingMapper bookingMapper = new();
 
             Booking booking = bookingMapper.ConvertToBooking(bookingRequest);
 
@@ -39,46 +41,30 @@ namespace RentarlCars.Tests.Mappers
         [Fact]
         public void Checking_if_BookingResponse_is_Equal_Booking()
         {
-            List<Booking> bookings = new List<Booking>();
+            List<Booking> bookings = new();
 
-            Booking booking = new Booking();
+            Booking booking = new ()
+            {
+                Code = "KIJG48",
+                User = new() { Name = "Joao da Silva" },
+                Category = new() { Description = "Economy" },
+                BranchGet = new() { Name = "Happy Cars Ltda" },
+                BranchReturn = new() { Name = "Peace Cars Ltda" },
+                ValueToPay = 355,
+                StartDay = new DateTime(2023, 08, 25),
+                ReturnDay = new DateTime(2023, 08, 27)
+            };
 
-            booking.Code = "KIJG48";
+            Extraa extra = new() { Service = "GPS", DayCost = 5, FixedCost = 30 };
 
-            User user = new User();
-            user.Name = "Joao da Silva";
-            booking.User = user;
+            BookingExtra bookingExtra = new() { Extra = extra };
 
-            Categories category= new Categories();
-            category.Description= "Economy";
-            booking.Category= category;
-
-            Branchs branch= new Branchs();
-            branch.Name= "Happy Cars Ltda";
-            booking.BranchGet= branch;
-
-            branch = new Branchs();
-            branch.Name= "Peace Cars Ltda";
-            booking.BranchReturn= branch;
-
-            BookingExtra bookingExtra= new BookingExtra();
-            Extraa extra = new Extraa();
-            extra.Service= "GPS";
-            extra.DayCost = 5;
-            extra.FixedCost = 30;
-            bookingExtra.Extra= extra;
-
-            List<BookingExtra> bookingsExtras = new List<BookingExtra>();
-            bookingsExtras.Add(bookingExtra);
+            List<BookingExtra> bookingsExtras = new() { bookingExtra };
             booking.BookExtra = bookingsExtras;
-
-            booking.ValueToPay = 355;
-            booking.StartDay = new DateTime(2023, 08, 25);
-            booking.ReturnDay = new DateTime(2023, 08, 27);
 
             bookings.Add(booking);
 
-            BookingMapper bookingMapper = new BookingMapper();
+            BookingMapper bookingMapper = new();
 
             List<BookingResponse> bookingsResponse = bookingMapper.ConvertToBookingResponse(bookings);
 
