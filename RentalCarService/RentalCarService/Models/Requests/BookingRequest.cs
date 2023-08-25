@@ -9,7 +9,7 @@ namespace RentalCarService.Models.Requests
         public int CategoryId { get; set; }
         public int BranchGetId { get; set; }
         public int BranchReturnId { get; set; }
-        public List<int> Extras { get; set; }
+        public List<int> Extras { get; set; } = new List<int>();
         public DateTime Start { get; set; }
         public DateTime Return { get; set; }
     }

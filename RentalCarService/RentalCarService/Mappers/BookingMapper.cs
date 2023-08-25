@@ -59,6 +59,8 @@ namespace RentalCarService.Mappers
             Branchs branch = new Branchs();
             branch.Id = bookingRequest.BranchGetId;
             booking.BranchGet = branch;
+
+            branch = new Branchs();
             branch.Id = bookingRequest.BranchReturnId;
             booking.BranchReturn = branch;
 
