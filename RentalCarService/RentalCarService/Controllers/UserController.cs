@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
+using RentalCarService.Models.Requests;
+using RentalCarService.Models.Responses;
 using System.Collections.Generic;
 
 namespace RentalCarService.Controllers
@@ -9,35 +11,45 @@ namespace RentalCarService.Controllers
     [Route("[Controller]")]
     public class UserController : ControllerBase
     {
-        IUserService UserService;
-        public UserController(IUserService userService)
-        { 
-            UserService= userService;
+        readonly IUserService _userService;
+        readonly IUserMapper _userMapper;
+        public UserController(IUserService userService, IUserMapper userMapper)
+        {
+            _userService = userService;
+            _userMapper = userMapper;
         }
 
         [HttpPost]
-        public void InsertNewUserDB(User User)
+        public void InsertNewUserDB(UserRequest userRequest)
         {
-            UserService.InserNewUser(User);
+            User user = _userMapper.ConvertToUser(userRequest);
+            _userService.InserNewUser(user);
         }
 
         [HttpGet]
-        public List<User> ReadUsersFromDB()
+        public List<UserResponse> ReadUsersFromDB()
         {
-            List<User> Users = UserService.ReadUsersFromDB();
-            return Users;
+            List<User> Users = _userService.ReadUsersFromDB();
+            List<UserResponse> usersResponse = _userMapper.ConvertToUserResponse(Users);
+            return usersResponse;
         }
 
         [HttpDelete]
-        public void DeleteUsersFromDB([FromQuery]int Id)
+        public void DeleteUsersFromDB([FromQuery] int Id)
         {
-            UserService.DeleteUser(Id);
+            _userService.DeleteUser(Id);
         }
 
-        [HttpPut]
-        public void UpdateUser(User User)
+        [HttpPut("{id}")]
+        public void UpdateUser(UserRequest userRequest, int id)
         {
-            UserService.UpdateUser(User);
+            User user= _userMapper.ConvertToUser(userRequest);
+
+            user.Id= id;
+
+            _userService.UpdateUser(user);
         }
+        
+
     }
 }

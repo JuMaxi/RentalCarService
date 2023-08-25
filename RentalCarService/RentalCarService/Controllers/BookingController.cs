@@ -11,25 +11,40 @@ namespace RentalCarService.Controllers
     [Route("[Controller]")]
     public class BookingController : ControllerBase
     {
-        IBookingService BookService;
+        readonly IBookingService _bookService;
+        readonly IBookingMapper _bookingMapper;
 
-        public BookingController(IBookingService bookService)
+        public BookingController(IBookingService bookService, IBookingMapper bookingMapper)
         {
-            BookService= bookService;
+            _bookService = bookService;
+            _bookingMapper = bookingMapper;
         }
 
         [HttpPost]
-        public void InsertNewBook(Booking book)
+        public void InsertNewBook(BookingRequest bookingRequest)
         {
-            BookService.InsertNewBook(book);
+            Booking booking = _bookingMapper.ConvertToBooking(bookingRequest);
+            _bookService.InsertNewBook(booking);
         }
 
-        [HttpGet]
+        [HttpGet("availability")]
         public List<AvailabilityResponse> ReturnAvailabilityCategories([FromQuery] AvailabilityRequest availability)
         {
-            List<AvailabilityResponse> availabilityCategories =  BookService.ReturnAvailabilityCategories(availability);
+            List<AvailabilityResponse> availabilityCategories = _bookService.ReturnAvailabilityCategories(availability);
 
             return availabilityCategories;
         }
+
+        [HttpGet]
+        public List<BookingResponse> ReadBookingsFromDB()
+        {
+            List<Booking> bookings = _bookService.ReadBookingsFromDB();
+
+            List<BookingResponse> bookingsResponse = _bookingMapper.ConvertToBookingResponse(bookings);
+
+            return bookingsResponse;
+        }
+
+        
     }
 }

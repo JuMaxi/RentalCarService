@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
+using RentalCarService.Models.Requests;
+using RentalCarService.Models.Responses;
 using System.Collections.Generic;
 
 namespace RentalCarService.Controllers
@@ -9,34 +11,43 @@ namespace RentalCarService.Controllers
     [Route("[Controller]")]
     public class CarController : ControllerBase
     {
-        ICarService CarService;
-        public CarController(ICarService carservice) 
+        readonly ICarService _carService;
+        readonly ICarMapper _carMapper;
+        public CarController(ICarService carservice, ICarMapper carMapper)
         {
-            CarService = carservice;
+            _carService = carservice;
+            _carMapper = carMapper;
         }
 
         [HttpPost]
-        public void InsertNewCarDB(Car NewCar)
+        public void InsertNewCarDB(CarRequest carRequest)
         {
-            CarService.InsertNewCar(NewCar);
+            Car newCar = _carMapper.ConvertCarRequest(carRequest);
+            _carService.InsertNewCar(newCar);
         }
+
         [HttpGet]
-        public List<Car> ReadFleetFromDB()
+        public List<CarResponse> ReadFleetFromDB()
         {
-            List<Car> Fleet = CarService.ReadFleetFromDB();
-            return Fleet;
+            List<Car> Fleet = _carService.ReadFleetFromDB();
+            List<CarResponse> fleetResponse = _carMapper.ConvertCarResponse(Fleet);
+            return fleetResponse;
         }
 
         [HttpDelete]
         public void DeleteCarDB([FromQuery] int Id)
         {
-            CarService.DeleteCarFleet(Id);
+            _carService.DeleteCarFleet(Id);
         }
 
-        [HttpPut]
-        public void UpdataCarDb(Car Car)
+        [HttpPut("{id}")]
+        public void UpdataCarDb(CarRequest carRequest, int id)
         {
-            CarService.UpdateCarFleet(Car);
+            Car car= _carMapper.ConvertCarRequest(carRequest);
+            car.Id= id;
+
+            _carService.UpdateCarFleet(car);
         }
+        
     }
 }
