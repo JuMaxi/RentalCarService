@@ -8,7 +8,7 @@ namespace RentalCarService.Validators
     {
         public void Validate(Extraa Extra)
         {
-            if(Extra.Service.Length == 0 || Extra.Service == null)
+            if(Extra.Service is null || Extra.Service.Length == 0)
             {
                 throw new Exception("The service/product can't be empty or null.");
             }
@@ -18,7 +18,7 @@ namespace RentalCarService.Validators
             }
             if(Extra.DayCost == 0 && Extra.FixedCost == 0)
             {
-                throw new Exception("At least one field cost must be filled to continue.");
+                throw new Exception("At least one field cost must be filled with a value greater than zero to continue.");
             }
             if(Extra.DayCost > 0 && Extra.FixedCost > 0)
             {
