@@ -48,10 +48,11 @@ namespace RentalCarService.Validators
             {
                 throw new Exception("The Password must be filled and can't be null.");
             }
-            ValidateUserEmail(User.Email);
             ValidateUserAddress(User.Address);
+            ValidateUserEmail(User.Email);
+
         }
-        private void ValidateUserAddress(UserAddress Address)
+        static private void ValidateUserAddress(UserAddress Address)
         {
             if (Address.Street is null || Address.Street.Length == 0)
             {
@@ -82,7 +83,7 @@ namespace RentalCarService.Validators
                 throw new Exception("The Country Id must be filled and can't be null.");
             }
         }
-        private void ValidateUserEmail(string Email)
+        static private void ValidateUserEmail(string Email)
         {
             if (Email is null || Email.Length == 0)
             {
