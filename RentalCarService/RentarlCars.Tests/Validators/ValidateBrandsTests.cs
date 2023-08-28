@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using RentalCarService.Validators;
@@ -10,15 +12,6 @@ using System.Threading.Tasks;
 
 namespace RentarlCars.Tests.Validators
 {
-    public class BrandsDbAccessFAKE : IBrandsDBAccess
-    {
-        public Brands Return { get; set; }
-        public Brands GetBrandByName(string name)
-        {
-            return Return;
-        }
-    }
-
     public class ValidateBrandsTests
     {
         [Fact]
@@ -64,8 +57,8 @@ namespace RentarlCars.Tests.Validators
                 Brand = "Boots"
             };
 
-            var dbAccessFake = new BrandsDbAccessFAKE();
-            dbAccessFake.Return = brandAlreadyExists;
+            var dbAccessFake = Substitute.For<IBrandsDBAccess>();
+            dbAccessFake.GetBrandByName("Boots").Returns(brandAlreadyExists);
 
             ValidateBrands validatorBrand = new(dbAccessFake);
 
@@ -82,8 +75,8 @@ namespace RentarlCars.Tests.Validators
                 Brand = "Boots"
             };
 
-            var dbAccessFake = new BrandsDbAccessFAKE();
-            dbAccessFake.Return = null;
+            var dbAccessFake = Substitute.For<IBrandsDBAccess>();
+            dbAccessFake.GetBrandByName("Boots").ReturnsNull();
 
             ValidateBrands validatorBrand = new(dbAccessFake);
 
