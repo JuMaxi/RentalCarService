@@ -47,7 +47,7 @@ namespace RentalCarService.Validators
             {
                 throw new Exception("The User Id must be filled to continue.");
             }
-            if (_userDBAccess.GetUserById(user.Id) == null)
+            if (_userDBAccess.GetUserById(user.Id) is null)
             {
                 throw new Exception("You must fill the user with a valid Id.");
             }
@@ -58,8 +58,8 @@ namespace RentalCarService.Validators
             {
                 throw new Exception("The Category Id must be filled to continue.");
             }
-            FindCarCategoryFromDB(category.Id);
 
+            FindCarCategoryFromDB(category.Id);
         }
         private void FindCarCategoryFromDB(int id)
         {
