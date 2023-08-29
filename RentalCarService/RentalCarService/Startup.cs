@@ -47,6 +47,10 @@ namespace RentalCarService
             services.AddTransient<ICarMapper, CarMapper>();
             services.AddTransient<IBrandsDBAccess, BrandsDBAccess>();
             services.AddTransient<ICategoriesDBAccess, CategoriesDBAccess>();
+            services.AddTransient<IBookingDBAccess, BookingDBAccess>();
+            services.AddTransient<IBranchesDBAccess, BranchesDBAccess>();
+            services.AddTransient<ICarDBAccess, CarDBAccess>();
+            services.AddTransient<IUserDBAccess, UserDBAccess>();
             services.AddControllers().AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());

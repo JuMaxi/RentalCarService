@@ -18,5 +18,7 @@ namespace RentalCarService.DbAccess
         {
             return _dbContext.Categories.Where(c => c.Code == code).FirstOrDefault();
         }
+
+
     }
 }
