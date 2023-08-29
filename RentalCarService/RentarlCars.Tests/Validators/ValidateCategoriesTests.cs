@@ -211,21 +211,87 @@ namespace RentarlCars.Tests.Validators
                 .WithMessage("The Max Days must be filled with value different than zero, null or empty.");
         }
 
-        //[Fact]
-        //public void When_category_is_null_from_db_should_not_throw_exception()
-        //{
-        //    Categories categoryIWantToInclude = new()
-        //    {
-        //        Code = "E"
-        //    };
+        [Fact]
+        public void When_price_is_zero_should_throw_new_exception()
+        {
+            Categories category = new()
+            {
+                Code = "E",
+                Description = "Economy",
+                PriceBands = new()
+                {
+                    new()
+                    {
+                        MinDays = 1,
+                        MaxDays = 5,
+                        Price = 0
+                    }
+                }
+            };
 
-        //    var dbAccessFake = Substitute.For<ICategoriesDBAccess>();
-        //    dbAccessFake.GetCategoryByCode(categoryIWantToInclude.Code).ReturnsNull();
+            var dbAccessFake = Substitute.For<ICategoriesDBAccess>();
+            dbAccessFake.GetCategoryByCode(category.Code).ReturnsNull();
 
-        //    ValidateCategories validatorCategory = new(dbAccessFake);
+            ValidateCategories validatorCategory = new(dbAccessFake);
 
-        //    validatorCategory.Invoking(validator => validator.ValidateCategory(categoryIWantToInclude))
-        //        .Should().NotThrow<Exception>();
-        //}
+            validatorCategory.Invoking(validator => validator.ValidateCategory(category))
+                .Should().Throw<Exception>()
+                .WithMessage("The Price must be filled to continue and must be greater than zero");
+        }
+
+        [Fact]
+        public void When_price_is_less_than_zero_should_throw_new_exception()
+        {
+            Categories category = new()
+            {
+                Code = "E",
+                Description = "Economy",
+                PriceBands = new()
+                {
+                    new()
+                    {
+                        MinDays = 1,
+                        MaxDays = 5,
+                        Price = -1
+                    }
+                }
+            };
+
+            var dbAccessFake = Substitute.For<ICategoriesDBAccess>();
+            dbAccessFake.GetCategoryByCode(category.Code).ReturnsNull();
+
+            ValidateCategories validatorCategory = new(dbAccessFake);
+
+            validatorCategory.Invoking(validator => validator.ValidateCategory(category))
+                .Should().Throw<Exception>()
+                .WithMessage("The Price must be filled to continue and must be greater than zero");
+        }
+
+        [Fact]
+        public void When_category_is_null_from_db_should_not_throw_exception()
+        {
+            Categories categoryIWantToInclude = new()
+            {
+                Code = "E",
+                Description = "Economy",
+                PriceBands = new()
+                {
+                    new()
+                    {
+                        MinDays = 1, 
+                        MaxDays = 5,
+                        Price = 70
+                    }
+                }
+            };
+
+            var dbAccessFake = Substitute.For<ICategoriesDBAccess>();
+            dbAccessFake.GetCategoryByCode(categoryIWantToInclude.Code).ReturnsNull();
+
+            ValidateCategories validatorCategory = new(dbAccessFake);
+
+            validatorCategory.Invoking(validator => validator.ValidateCategory(categoryIWantToInclude))
+                .Should().NotThrow<Exception>();
+        }
     }
 }
