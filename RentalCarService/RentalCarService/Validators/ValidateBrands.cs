@@ -1,23 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RentalCarService.Interfaces;
+﻿using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using System;
 using System.Data;
 using System.Linq;
 
+
 namespace RentalCarService.Validators
 {
     public class ValidateBrands : IValidateBrands
     {
-        private readonly RentalCarsDBContext _dbContext;
-        public ValidateBrands(RentalCarsDBContext dBContext)
+        private readonly IBrandsDBAccess _brandsDBAccess;
+
+        public ValidateBrands(IBrandsDBAccess brandsDBAccess)
         {
-            _dbContext = dBContext;
+            _brandsDBAccess = brandsDBAccess;
         }
 
         public void ValidateBrandName(Brands Brand)
         {
-            if (Brand.Brand == null || Brand.Brand.Length == 0)
+            if (Brand.Brand is null || Brand.Brand.Length == 0)
             {
                 throw new Exception("The Brand must be filled and can't be null. Fill the field to continue.");
             }
@@ -25,7 +26,7 @@ namespace RentalCarService.Validators
         }
         private void ValidateRepeatedBrandName(Brands Brand)
         {
-            Brands brandsFromDatabase = _dbContext.Brands.Where(b => b.Brand.Equals(Brand.Brand)).FirstOrDefault();
+            Brands brandsFromDatabase = _brandsDBAccess.GetBrandByName(Brand.Brand);
 
             if (brandsFromDatabase != null)
             {

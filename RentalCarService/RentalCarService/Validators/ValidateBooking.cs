@@ -1,47 +1,53 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RentalCarService.Interfaces;
+﻿using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 
 namespace RentalCarService.Validators
 {
     public class ValidateBooking : IValidateBooking
     {
-        private readonly RentalCarsDBContext _dbcontext;
+        private readonly IBookingDBAccess _bookingDBAccess;
         private readonly IAvailabilityService _availabilityService;
+        private readonly ICarDBAccess _carDBAccess;
+        private readonly IBranchesDBAccess _branchesDBAccess;
+        private readonly IUserDBAccess _userDBAccess;
 
-        public ValidateBooking(RentalCarsDBContext dbcontext, IAvailabilityService availabilityService)
+        public ValidateBooking(IBookingDBAccess bookingDBAccess, IAvailabilityService availabilityService,
+            ICarDBAccess carDBAccess, IBranchesDBAccess branchesDBAccess, IUserDBAccess userDBAccess)
         {
-            _dbcontext = dbcontext;
+            _bookingDBAccess = bookingDBAccess;
             _availabilityService = availabilityService;
+            _carDBAccess = carDBAccess;
+            _branchesDBAccess = branchesDBAccess;
+            _userDBAccess = userDBAccess;
         }
         public void Validate(Booking booking)
         {
-            List<Booking> nearbyBookings = FindBookFromDB(booking);
-            int countFleetCategory = FindCountFleetPerCategoryFromDB(booking.Category);
-
-            if (_availabilityService.ExistsAvailabilityForBooking(booking, nearbyBookings, countFleetCategory) == false)
-            {
-                throw new Exception("There is no availiability for the requested dates");
-            }
-
+            ValidateAvailability(booking);
             ValidateUser(booking.User);
             ValidateCategory(booking.Category);
             ValidateHoursBranchGetCar(booking);
             ValidateHoursBranchReturnCar(booking);
 
         }
+        private void ValidateAvailability(Booking booking)
+        {
+            List<Booking> nearbyBookings = _bookingDBAccess.GetListBookingByCategoryIdAndDatesStartReturn(booking);
+            int countFleetCategory = _carDBAccess.GetCountFleetByCategoryId(booking.Category.Id);
 
+            if (_availabilityService.ExistsAvailabilityForBooking(booking, nearbyBookings, countFleetCategory) == false)
+            {
+                throw new Exception("There is no availiability for the requested dates");
+            }
+        }
         private void ValidateUser(User user)
         {
             if (user.Id == 0)
             {
                 throw new Exception("The User Id must be filled to continue.");
             }
-            if(FindUserFromDB(user.Id) == null)
+            if (_userDBAccess.GetUserById(user.Id) is null)
             {
                 throw new Exception("You must fill the user with a valid Id.");
             }
@@ -52,23 +58,17 @@ namespace RentalCarService.Validators
             {
                 throw new Exception("The Category Id must be filled to continue.");
             }
-            FindCarCategoryFromDB(category.Id);
 
+            FindCarCategoryFromDB(category.Id);
         }
         private void FindCarCategoryFromDB(int id)
         {
-            var car = _dbcontext.Fleet.Include(c => c.Category).Where(f => f.Category.Id == id).FirstOrDefault();
+            var car = _carDBAccess.GetCarByCategoryId(id);
 
             if (car == null)
             {
                 throw new Exception("There is no cars available in this category.");
             }
-        }
-
-        private Branchs FindBranchFromDB(int id)
-        {
-            var branch = _dbcontext.Branches.Include(O => O.OpeningHours).Where(B => B.Id == id).FirstOrDefault();
-            return branch;
         }
 
         private void ValidateHoursBranchGetCar(Booking booking)
@@ -79,7 +79,7 @@ namespace RentalCarService.Validators
             }
 
             bool close = true;
-            Branchs branchGet = FindBranchFromDB(booking.BranchGet.Id);
+            Branchs branchGet = _branchesDBAccess.GetBranchById(booking.BranchGet.Id);
 
             foreach (OpeningHours h in branchGet.OpeningHours)
             {
@@ -107,7 +107,7 @@ namespace RentalCarService.Validators
             }
 
             bool close = true;
-            Branchs branchReturn = FindBranchFromDB(booking.BranchReturn.Id);
+            Branchs branchReturn = _branchesDBAccess.GetBranchById(booking.BranchReturn.Id);
 
             foreach (OpeningHours h in branchReturn.OpeningHours)
             {
@@ -127,32 +127,6 @@ namespace RentalCarService.Validators
                 throw new Exception("This branch is not open on day " + booking.ReturnDay.DayOfWeek +
                     ". Please select a day that this branch is open.");
             }
-        }
-
-        private User FindUserFromDB(int id)
-        {
-            User user = _dbcontext.Users.Find(id);
-
-            return user;
-        }
-        private List<Booking> FindBookFromDB(Booking booking)
-        {
-            List<Booking> books = _dbcontext.Books
-                .Include(c => c.Category)
-                .Where(b => b.Category.Id == booking.Category.Id)
-                .Where(d => d.StartDay <= booking.ReturnDay)
-                .Where(c => c.StartDay >= booking.StartDay)
-                .ToList();
-
-            return books;
-        }
-        private int FindCountFleetPerCategoryFromDB(Categories category)
-        {
-            int count = _dbcontext.Fleet.Include(c => c.Category)
-                .Where(f => f.Category.Id == category.Id)
-                .Count();
-
-            return count;
         }
     }
 }

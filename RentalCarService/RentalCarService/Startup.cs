@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using RentalCarService.DbAccess;
 using RentalCarService.Interfaces;
 using RentalCarService.Mappers;
 using RentalCarService.Services;
@@ -44,6 +45,12 @@ namespace RentalCarService
             services.AddTransient<IBookingMapper, BookingMapper>();
             services.AddTransient<IUserMapper, UserMapper>();
             services.AddTransient<ICarMapper, CarMapper>();
+            services.AddTransient<IBrandsDBAccess, BrandsDBAccess>();
+            services.AddTransient<ICategoriesDBAccess, CategoriesDBAccess>();
+            services.AddTransient<IBookingDBAccess, BookingDBAccess>();
+            services.AddTransient<IBranchesDBAccess, BranchesDBAccess>();
+            services.AddTransient<ICarDBAccess, CarDBAccess>();
+            services.AddTransient<IUserDBAccess, UserDBAccess>();
             services.AddControllers().AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());

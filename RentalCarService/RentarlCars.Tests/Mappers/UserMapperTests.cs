@@ -1,14 +1,8 @@
 ﻿using FluentAssertions;
 using RentalCarService.Mappers;
-using RentalCarService.Migrations;
 using RentalCarService.Models;
 using RentalCarService.Models.Requests;
 using RentalCarService.Models.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RentarlCars.Tests.Mappers
 {
