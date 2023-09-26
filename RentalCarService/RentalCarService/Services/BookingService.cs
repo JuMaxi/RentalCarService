@@ -7,21 +7,27 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace RentalCarService.Services
 {
     public class BookingService : IBookingService
     {
-        private readonly RentalCarsDBContext _dbContext;
+        private readonly IBookingDBAccess _bookingDBAccess;
         IValidateBooking _validateBook;
         IAvailabilityService _availabilityService;
+        private readonly ICategoriesDBAccess _categoriesDBAccess;
+        private readonly IBranchesDBAccess _branchesDBAccess;
+        private readonly IUserDBAccess _userDBAccess;
 
-        public BookingService(RentalCarsDBContext dbContext, IValidateBooking validateBook, IAvailabilityService availabilityService)
+        public BookingService(IBookingDBAccess bookingDBAccess, IValidateBooking validateBook, IAvailabilityService availabilityService,
+            ICategoriesDBAccess categoriesDBAccess, IBranchesDBAccess branchesDBAccess, IUserDBAccess userDBAccess)
         {
-            _dbContext = dbContext;
+            _bookingDBAccess = bookingDBAccess;
             _validateBook = validateBook;
             _availabilityService = availabilityService;
+            _categoriesDBAccess = categoriesDBAccess;
+            _branchesDBAccess = branchesDBAccess;
+            _userDBAccess = userDBAccess;
         }
 
         public List<AvailabilityResponse> ReturnAvailabilityCategories(AvailabilityRequest availability)
@@ -63,13 +69,12 @@ namespace RentalCarService.Services
             booking.Category = FindCategoryDB(booking);
             booking.BranchGet = FindBranchDB(booking.BranchGet.Id);
             booking.BranchReturn = FindBranchDB(booking.BranchReturn.Id);
-            booking.User = FindCountryDB(booking.User.Id);
+            booking.User = FindUserFromDB(booking.User.Id);
             booking.Code = GenerateBookNumber();
             booking.BookExtra = SaveExtraToBookExtra(booking);
             booking.ValueToPay = CalculateValueToPay(booking);
 
-            _dbContext.Books.Add(booking);
-            _dbContext.SaveChanges();
+            _bookingDBAccess.AddNewBook(booking);
         }
 
         private List<BookingExtra> SaveExtraToBookExtra(Booking booking)
@@ -101,7 +106,7 @@ namespace RentalCarService.Services
 
         private string CheckBookNumberCodeDB(string code)
         {
-            var Book = _dbContext.Books.Where(c => c.Code == code).FirstOrDefault();
+            var Book = _bookingDBAccess.GetBookingByCode(code);
 
             if (Book != null)
             {
@@ -165,26 +170,16 @@ namespace RentalCarService.Services
 
         private Branchs FindBranchDB(int id)
         {
-            var branch = _dbContext.Branches.Include(O => O.OpeningHours).Where(B => B.Id == id).FirstOrDefault();
-            return branch;
+            return _branchesDBAccess.GetBranchById(id);
         }
         private Categories FindCategoryDB(Booking booking)
         {
-            Categories Category = _dbContext.Categories.Include(P => P.PriceBands).Where(C => C.Id == booking.Category.Id).FirstOrDefault();
-            return Category;
+            return _categoriesDBAccess.GetCategoryById(booking.Category.Id);
         }
 
-        private User FindCountryDB(int Id)
+        private User FindUserFromDB(int Id)
         {
-            User User = _dbContext.Users
-                .Include(c => c.CountryCNH)
-                .Include(n => n.Nationality)
-                .Include(a => a.Address)
-                .ThenInclude(ac => ac.Country)
-                .Where(I => I.Id == Id)
-                .FirstOrDefault();
-
-            return User;
+            return _userDBAccess.GetUserByIdThenInclude(Id);
         }
 
         private int CalculateDaysBook(Booking booking)
@@ -201,18 +196,7 @@ namespace RentalCarService.Services
 
         public List<Booking> ReadBookingsFromDB()
         {
-            List<Booking> bookings = new List<Booking>();
-
-            bookings = _dbContext.Books
-                .Include(u => u.User)
-                .Include(c => c.Category)
-                .Include(b => b.BranchGet)
-                .Include(b => b.BranchReturn)
-                .Include(be => be.BookExtra)
-                .ThenInclude(e => e.Extra)
-                .ToList();
-
-            return bookings;
+            return _bookingDBAccess.GetBookingThenInclude();
         }
     }
 }

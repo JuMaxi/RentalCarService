@@ -8,40 +8,39 @@ namespace RentalCarService.Services
     public class CountriesService : ICountriesService
     {
         IValidateCountries ValidateCountries;
-        private readonly RentalCarsDBContext _dbContext;
+        private readonly ICountriesDBAccess _countriesDBAccess;
 
-        public CountriesService(IValidateCountries validateCountries, RentalCarsDBContext dbContext)
+        public CountriesService(IValidateCountries validateCountries, ICountriesDBAccess countriesDBAccess)
         {
             ValidateCountries = validateCountries;
-            _dbContext = dbContext;
+            _countriesDBAccess = countriesDBAccess;
         }
 
-        public void InsertNewCountry(Countries Countries)
+        public void InsertNewCountry(Countries country)
         {
-            ValidateCountries.ValidateNameCountry(Countries.Country);
-            _dbContext.Countries.Add(Countries);
-            _dbContext.SaveChanges();
+            ValidateCountries.ValidateNameCountry(country.Country);
+
+            _countriesDBAccess.AddNewCountry(country);
         }
 
         public List<Countries> ReadCountriesDB()
         {
-            var allCountries = _dbContext.Countries.ToList();
-            return allCountries;
+            return _countriesDBAccess.GetCountries();
         }
 
         public void DeleteCountry(int Id)
         {
-            Countries toRemove = _dbContext.Countries.Find(Id);
-            _dbContext.Remove(toRemove);
-            _dbContext.SaveChanges();
+           _countriesDBAccess.DeleteCountry(Id);
         }
 
-        public void UpdateCountry(Countries Countries)
+        public void UpdateCountry(Countries country)
         {
-            ValidateCountries.ValidateNameCountry(Countries.Country);
-            Countries toUpdate = _dbContext.Countries.Find(Countries.Id);
-            toUpdate.Country = Countries.Country;
-            _dbContext.SaveChanges();
+            ValidateCountries.ValidateNameCountry(country.Country);
+
+            Countries toUpdate = _countriesDBAccess.GetCountryById(country.Id);
+            toUpdate.Country = country.Country;
+
+            _countriesDBAccess.UpdateCountry(toUpdate);
         }
     }
 }
