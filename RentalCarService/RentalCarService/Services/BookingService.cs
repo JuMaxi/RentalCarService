@@ -1,12 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RentalCarService.Interfaces;
+﻿using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using RentalCarService.Models.Requests;
 using RentalCarService.Models.Responses;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 namespace RentalCarService.Services
 {
@@ -18,9 +15,11 @@ namespace RentalCarService.Services
         private readonly ICategoriesDBAccess _categoriesDBAccess;
         private readonly IBranchesDBAccess _branchesDBAccess;
         private readonly IUserDBAccess _userDBAccess;
+        private readonly IExtraDBAccess _extraDBAccess;
 
-        public BookingService(IBookingDBAccess bookingDBAccess, IValidateBooking validateBook, IAvailabilityService availabilityService,
-            ICategoriesDBAccess categoriesDBAccess, IBranchesDBAccess branchesDBAccess, IUserDBAccess userDBAccess)
+        public BookingService(IBookingDBAccess bookingDBAccess, IValidateBooking validateBook, 
+            IAvailabilityService availabilityService, ICategoriesDBAccess categoriesDBAccess, 
+            IBranchesDBAccess branchesDBAccess, IUserDBAccess userDBAccess, IExtraDBAccess extraDBAccess)
         {
             _bookingDBAccess = bookingDBAccess;
             _validateBook = validateBook;
@@ -28,6 +27,7 @@ namespace RentalCarService.Services
             _categoriesDBAccess = categoriesDBAccess;
             _branchesDBAccess = branchesDBAccess;
             _userDBAccess = userDBAccess;
+            _extraDBAccess = extraDBAccess;
         }
 
         public List<AvailabilityResponse> ReturnAvailabilityCategories(AvailabilityRequest availability)
@@ -162,16 +162,14 @@ namespace RentalCarService.Services
 
         private List<Extraa> FindExtraDB(Booking booking)
         {
-            var ids = booking.BookExtra.Select(bookExtra => bookExtra.Extra.Id).ToList(); // [1, 4]
-            var listExtras = _dbContext.Extras.Where(extra => ids.Contains(extra.Id)).ToList(); // usa a lista para filtro
-            return listExtras;
-
+            return _extraDBAccess.GetExtraDB(booking);
         }
 
         private Branchs FindBranchDB(int id)
         {
             return _branchesDBAccess.GetBranchById(id);
         }
+
         private Categories FindCategoryDB(Booking booking)
         {
             return _categoriesDBAccess.GetCategoryById(booking.Category.Id);
