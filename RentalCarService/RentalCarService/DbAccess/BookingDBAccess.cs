@@ -27,6 +27,26 @@ namespace RentalCarService.DbAccess
             return books;
         }
 
-       
+        public void AddNewBook(Booking booking)
+        {
+            _dbcontext.Books.Add(booking);
+            _dbcontext.SaveChanges();
+        }
+        public List<Booking> GetBookingThenInclude()
+        {
+            return _dbcontext.Books
+                .Include(u => u.User)
+                .Include(c => c.Category)
+                .Include(b => b.BranchGet)
+                .Include(b => b.BranchReturn)
+                .Include(be => be.BookExtra)
+                .ThenInclude(e => e.Extra)
+                .ToList();
+        }
+        public Booking GetBookingByCode(string code)
+        {
+            return _dbcontext.Books.Where(c => c.Code == code).FirstOrDefault();
+        }
+
     }
 }

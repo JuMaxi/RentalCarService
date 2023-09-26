@@ -1,9 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RentalCarService.Interfaces;
+﻿using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 
 namespace RentalCarService.Services
@@ -11,53 +8,46 @@ namespace RentalCarService.Services
     public class CategoriesService : ICategoriesService
     {
         IValidateCategories ValidateCategories;
-        private readonly RentalCarsDBContext _dbContext;
+        private readonly ICategoriesDBAccess _categoriesDBAccess;
 
-        public CategoriesService(IValidateCategories validateCategories, RentalCarsDBContext dbContext)
+        public CategoriesService(IValidateCategories validateCategories, ICategoriesDBAccess categoriesDBAccess)
         {
             ValidateCategories = validateCategories;
-            _dbContext = dbContext;
+            _categoriesDBAccess = categoriesDBAccess;
         }
         public void RegistryNewCategory(Categories NewCategory)
         {
             ValidateCategories.ValidateCategory(NewCategory);
-            _dbContext.Categories.Add(NewCategory);
-            _dbContext.SaveChanges();
+            
+            _categoriesDBAccess.AddNewCategory(NewCategory);
         }
 
         public List<Categories> ReadCategoriesFromDB()
         {
-            var allCategories = _dbContext.Categories.Include(c => c.PriceBands).ToList();
-            return allCategories;
+            return _categoriesDBAccess.GetCategories();
         }
 
         private Categories FindPriceBandsDB(int CategoryId)
         {
-            Categories Categorie = _dbContext.Categories.Include(P => P.PriceBands).Where(c => c.Id == CategoryId).FirstOrDefault();
-
-            foreach (var priceband in Categorie.PriceBands)
-                _dbContext.Remove(priceband);
-
-            return Categorie;
+            return _categoriesDBAccess.GetCategoryById(CategoryId);
         }
+
         public void DeleteCategory(int Id)
         {
-            Categories toRemove = FindPriceBandsDB(Id);
-
-            _dbContext.Remove(toRemove);
-            _dbContext.SaveChanges();
+            _categoriesDBAccess.DeleteCategory(Id);
         }
 
         public void UpdateCategory(Categories Category)
         {
             ValidateCategories.ValidateCategory(Category);
 
-            Categories toUpdate = FindPriceBandsDB(Category.Id);
+            Categories toUpdate = _categoriesDBAccess.GetCategoryById(Category.Id);
 
             toUpdate.Code = Category.Code;
             toUpdate.Description = Category.Description;
             toUpdate.PriceBands = Category.PriceBands;
-            _dbContext.SaveChanges();
+            
+            _categoriesDBAccess.UpdateCategory(toUpdate);
         }
     }
 }
