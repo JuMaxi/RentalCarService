@@ -1,16 +1,9 @@
 ﻿using FluentAssertions;
 using NSubstitute;
-using NSubstitute.Core.Arguments;
 using NSubstitute.ReturnsExtensions;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using RentalCarService.Validators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RentarlCars.Tests.Validators
 {

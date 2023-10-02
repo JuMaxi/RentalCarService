@@ -32,6 +32,10 @@ namespace RentalCarService.Services
 
         public List<AvailabilityResponse> ReturnAvailabilityCategories(AvailabilityRequest availability)
         {
+            // Teste 1: Quando ha categorias no banco de dados, mas estao todas indisponiveis para a data selecionada, deve retornar uma lista vazia (0 items)
+            // Teste 2: Quando ha 3 categorias e 2 estao disponiveis nas datas, deve retornar 2 e nao 3.
+            // Teste 3: Dado que ha 1 categoria e esta disponivel, devemos retornar a estimativa de preco correta
+
             List<Categories> categories = _availabilityService.SaveListAvailableCategories(availability);
             List<AvailabilityResponse> availabilityCategories = new List<AvailabilityResponse>();
 
@@ -62,8 +66,19 @@ namespace RentalCarService.Services
 
             return availabilityCategories;
         }
+
         public void InsertNewBook(Booking booking)
         {
+            // Teste 1: Quando a validacao falhar, deve lancar exception (ou seja, nao insere no banco)
+            // Teste 2: Quando a validacao passar, deve incluir no banco de dados
+            // Teste 3: O numero da reserva deve ter 6 posicoes, e elas podem ser apenas letras e numeros
+            // Teste 4: CALCULO PRECO: Dado que o horario de devolucao seja SUPERIOR ao de coleta, deve cobrar uma diaria adicional
+            // Teste 5: CALCULO PRECO: Dado que o horario de devolucao seja IGUAL, NAO COBRAR uma diaria adicional
+            // Teste 6: CALCULO PRECO: Dado que temos duas reservas iguais, o valor a pagar deve ser igual
+            // Teste 7: CALCULO PRECO: Dado que temos uma reserva com booking extra e outra sem, o valor a pagar deve ser diferente
+            // Teste 8: CALCULO PRECO: (Testar cenario com DayCost)
+            // Teste 9: CALCULO PRECO: (Testar cenario com FixedCost)
+
             _validateBook.Validate(booking);
 
             booking.Category = FindCategoryDB(booking);
