@@ -552,7 +552,7 @@ namespace RentarlCars.Tests.Validators
                             Closes = new TimeOnly(18, 00, 00)
                         }
                     }
-                }
+                },
             };
 
             var dbAccessBookingFake = Substitute.For<IBookingDBAccess>();

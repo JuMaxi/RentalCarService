@@ -1,17 +1,14 @@
 ﻿using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using NSubstitute;
-using NSubstitute.Core.Arguments;
+using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
 using RentalCarService.Models.Requests;
 using RentalCarService.Models.Responses;
 using RentalCarService.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Specialized;
 
 namespace RentarlCars.Tests.Services
 {
@@ -124,6 +121,109 @@ namespace RentarlCars.Tests.Services
 
             var availabilityResponse = bookingService.ReturnAvailabilityCategories(availability);
             availabilityResponse[0].Estimative.Should().Be(20);
+        }
+
+        [Fact]
+        public void When_booking_is_not_valid_should_throw_new_exception()
+        {
+            Booking booking = new();
+
+            var validateFake = Substitute.For<IValidateBooking>();
+            validateFake.When(x => x.Validate(booking)).Do(x => { throw new Exception(); });
+
+            BookingService bookingService = new(null, validateFake, null, null, null, null, null);
+
+            bookingService.Invoking(b => b.InsertNewBook(booking))
+                .Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public void When_booking_is_valid_should_not_throw_exception()
+        {
+            Booking booking = new()
+            {
+                Category = new()
+                {
+                    Id = 1004,
+                    PriceBands = new()
+                    {
+                        new()
+                        {
+                            MinDays = 1,
+                            MaxDays = 2,
+                            Price = 10
+                        }
+                    }
+                },
+                StartDay = new DateTime(2023, 09, 04, 08, 00, 00),
+                ReturnDay = new DateTime(2023, 09, 05, 17, 00, 00),
+                User = new()
+                {
+                    Id = 1
+                },
+                BranchGet = new()
+                {
+                    Id = 1,
+                    OpeningHours = new()
+                    {
+                        new()
+                        {
+                            DayOfWeek = new DateTime(2023, 09, 04).DayOfWeek,
+                            Opens = new TimeOnly(07, 00, 00),
+                        }
+                    }
+                },
+                BranchReturn = new()
+                {
+                    Id = 2,
+                    OpeningHours = new()
+                    {
+                        new()
+                        {
+                            DayOfWeek = new DateTime(2023, 09, 05, 17, 00, 00).DayOfWeek,
+                            Closes = new TimeOnly(18, 00, 00)
+                        }
+                    }
+                },
+                BookExtra= new()
+                {
+                    new()
+                    {
+                        Extra= new()
+                        {
+                            Id = 1,
+                            DayCost = 5
+                        }
+                    }
+                }
+            };
+
+            var validateFake = Substitute.For<IValidateBooking>();
+            validateFake.Validate(booking);
+
+            var dbAccessCategoriesFake = Substitute.For<ICategoriesDBAccess>();
+            dbAccessCategoriesFake.GetCategoryById(booking.Category.Id).Returns(booking.Category);
+
+            var dbAccessUserFake = Substitute.For<IUserDBAccess>();
+            dbAccessUserFake.GetUserByIdThenInclude(booking.User.Id).Returns(booking.User);
+
+            var dbAccessBranchFake = Substitute.For<IBranchesDBAccess>();
+            dbAccessBranchFake.GetBranchById(booking.BranchGet.Id).Returns(booking.BranchGet);
+            dbAccessBranchFake.GetBranchById(booking.BranchReturn.Id).Returns(booking.BranchReturn);
+
+            List<Extraa> extras = new();
+            extras.Add(booking.BookExtra[0].Extra);
+            var dbAccessExtrasFake = Substitute.For<IExtraDBAccess>();
+            dbAccessExtrasFake.GetExtraDB(booking).Returns(extras);
+
+            var dbAccessBookingFake = Substitute.For<IBookingDBAccess>();
+            dbAccessBookingFake.AddNewBook(booking);
+
+            BookingService bookingService = new(dbAccessBookingFake, validateFake, null, dbAccessCategoriesFake, dbAccessBranchFake,
+                dbAccessUserFake, dbAccessExtrasFake);
+
+            bookingService.Invoking(b => b.InsertNewBook(booking))
+                .Should().NotThrow<Exception>();
         }
 
         [Fact]
