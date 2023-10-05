@@ -386,6 +386,79 @@ namespace RentarlCars.Tests.Services
             dbAccessBookingFake.Received().AddNewBook(Arg.Is<Booking>(b => b.ValueToPay == 315));
         }
 
+        [Fact]
+        public void When_hour_return_is_same_hour_start_should_pay_just_the_booked_days()
+        {
+            Booking booking = new()
+            {
+                StartDay = DateTime.Now,
+                ReturnDay = DateTime.Now.AddDays(2),
+                Category = new()
+                {
+                    Id = 1,
+                    PriceBands = new()
+                    {
+                        new()
+                        {
+                            MinDays = 1,
+                            MaxDays = 2,
+                            Price = 100
+                        }
+                    }
+                },
+                BranchGet = new()
+                {
+                    Id = 1
+                },
+                BranchReturn = new()
+                {
+                    Id = 2
+                },
+                User = new()
+                {
+                    Id = 6
+                },
+                BookExtra = new()
+                {
+                    new()
+                    {
+                        Extra = new()
+                        {
+                            Id = 2,
+                            DayCost = 10
+                        }
+                    }
+                }
+            };
+
+            var validateFake = Substitute.For<IValidateBooking>();
+            validateFake.Validate(booking);
+
+            var dbAccessCategoriesFake = Substitute.For<ICategoriesDBAccess>();
+            dbAccessCategoriesFake.GetCategoryById(booking.Category.Id).Returns(booking.Category);
+
+            var dbAccessBranchesFake = Substitute.For<IBranchesDBAccess>();
+            dbAccessBranchesFake.GetBranchById(booking.BranchGet.Id).Returns(booking.BranchGet);
+            dbAccessBranchesFake.GetBranchById(booking.BranchReturn.Id).Returns(booking.BranchReturn);
+
+            var dbAccessUserFake = Substitute.For<IUserDBAccess>();
+            dbAccessUserFake.GetUserByIdThenInclude(booking.User.Id).Returns(booking.User);
+
+            List<Extraa> list = new() { booking.BookExtra[0].Extra };
+            var dbAccessExtraFake = Substitute.For<IExtraDBAccess>();
+            dbAccessExtraFake.GetExtraDB(booking).Returns(list);
+
+            var dbAccessBookingFake = Substitute.For<IBookingDBAccess>();
+            dbAccessBookingFake.AddNewBook(booking);
+
+            BookingService bookingService = new(dbAccessBookingFake, validateFake, null, dbAccessCategoriesFake,
+                dbAccessBranchesFake, dbAccessUserFake, dbAccessExtraFake);
+
+            bookingService.InsertNewBook(booking);
+
+            dbAccessBookingFake.Received().AddNewBook(Arg.Is<Booking>(b => b.ValueToPay == 220));
+        }
+
 
         [Fact]
         public void TesteBlabla()
