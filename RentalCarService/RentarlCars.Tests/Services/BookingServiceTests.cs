@@ -186,7 +186,7 @@ namespace RentarlCars.Tests.Services
                         }
                     }
                 },
-                BookExtra= new()
+                BookExtra = new()
                 {
                     new()
                     {
@@ -240,7 +240,7 @@ namespace RentarlCars.Tests.Services
                         new()
                         {
                             MinDays = 1,
-                            MaxDays = 2, 
+                            MaxDays = 2,
                             Price = 10
                         }
                     }
@@ -266,7 +266,7 @@ namespace RentarlCars.Tests.Services
                             Id = 1,
                             DayCost = 5
                         }
-                        
+
                     }
                 }
             };
@@ -292,19 +292,18 @@ namespace RentarlCars.Tests.Services
             var dbAccessBookingFake = Substitute.For<IBookingDBAccess>();
             dbAccessBookingFake.AddNewBook(booking);
 
-            BookingService bookingService = new(dbAccessBookingFake, validateFake, null, dbAccessCategoriesFake, 
+            BookingService bookingService = new(dbAccessBookingFake, validateFake, null, dbAccessCategoriesFake,
                 dbAccessBranchFake, dbAccessUserFake, dbAccessExtrasFake);
 
             bookingService.InsertNewBook(booking);
 
-            dbAccessBookingFake.Received().AddNewBook(Arg.Is<Booking>(book => book.Code.Length == 6 
+            dbAccessBookingFake.Received().AddNewBook(Arg.Is<Booking>(book => book.Code.Length == 6
             && CheckIfCharIsLetterOrDigit(book.Code) == true));
-
         }
 
         private bool CheckIfCharIsLetterOrDigit(string code)
         {
-            foreach(char c in code)
+            foreach (char c in code)
             {
                 if (!char.IsLetterOrDigit(c))
                 {
@@ -312,6 +311,79 @@ namespace RentarlCars.Tests.Services
                 }
             }
             return true;
+        }
+
+        [Fact]
+        public void When_hour_return_is_greater_than_hour_start_should_add_one_extra_day_to_pay()
+        {
+            Booking booking = new()
+            {
+                StartDay = DateTime.Now,
+                ReturnDay = DateTime.Now.AddDays(2).AddHours(3),
+                Category = new()
+                {
+                    Id = 1,
+                    PriceBands = new()
+                    {
+                        new()
+                        {
+                            MinDays = 1,
+                            MaxDays = 3,
+                            Price = 100
+                        }
+                    }
+                },
+                BranchGet = new()
+                {
+                    Id = 1
+                },
+                BranchReturn = new()
+                {
+                    Id = 2
+                },
+                User = new()
+                {
+                    Id = 5
+                },
+                BookExtra = new()
+                {
+                    new()
+                    {
+                        Extra = new()
+                        {
+                            Id = 1,
+                            DayCost = 5
+                        }
+                    }
+                }
+            };
+
+            var validateFake = Substitute.For<IValidateBooking>();
+            validateFake.Validate(booking);
+
+            var dbAccessCategoriesFake = Substitute.For<ICategoriesDBAccess>();
+            dbAccessCategoriesFake.GetCategoryById(booking.Category.Id).Returns(booking.Category);
+
+            var dbAccessBranchesFake = Substitute.For<IBranchesDBAccess>();
+            dbAccessBranchesFake.GetBranchById(booking.BranchGet.Id).Returns(booking.BranchGet);
+            dbAccessBranchesFake.GetBranchById(booking.BranchReturn.Id).Returns(booking.BranchReturn);
+
+            var dbAccessUserFake = Substitute.For<IUserDBAccess>();
+            dbAccessUserFake.GetUserByIdThenInclude(booking.User.Id).Returns(booking.User);
+
+            List<Extraa> extras = new() { booking.BookExtra[0].Extra };
+            var dbAccessExtrasFake = Substitute.For<IExtraDBAccess>();
+            dbAccessExtrasFake.GetExtraDB(booking).Returns(extras);
+
+            var dbAccessBookingFake = Substitute.For<IBookingDBAccess>();
+            dbAccessBookingFake.AddNewBook(booking);
+
+            BookingService bookingService = new(dbAccessBookingFake, validateFake, null, dbAccessCategoriesFake,
+                dbAccessBranchesFake, dbAccessUserFake, dbAccessExtrasFake);
+
+            bookingService.InsertNewBook(booking);
+
+            dbAccessBookingFake.Received().AddNewBook(Arg.Is<Booking>(b => b.ValueToPay == 315));
         }
 
 
