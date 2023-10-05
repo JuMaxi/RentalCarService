@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using NSubstitute.ReceivedExtensions;
 using NSubstitute.ReturnsExtensions;
 using RentalCarService.Interfaces;
 using RentalCarService.Models;
@@ -225,6 +226,94 @@ namespace RentarlCars.Tests.Services
             bookingService.Invoking(b => b.InsertNewBook(booking))
                 .Should().NotThrow<Exception>();
         }
+
+        [Fact]
+        public void Validating_code_booking_length_is_six_and_is_char_or_digit()
+        {
+            Booking booking = new()
+            {
+                Category = new()
+                {
+                    Id = 1,
+                    PriceBands = new()
+                    {
+                        new()
+                        {
+                            MinDays = 1,
+                            MaxDays = 2, 
+                            Price = 10
+                        }
+                    }
+                },
+                BranchGet = new()
+                {
+                    Id = 1,
+                },
+                BranchReturn = new()
+                {
+                    Id = 2
+                },
+                User = new()
+                {
+                    Id = 1
+                },
+                BookExtra = new()
+                {
+                    new()
+                    {
+                        Extra = new()
+                        {
+                            Id = 1,
+                            DayCost = 5
+                        }
+                        
+                    }
+                }
+            };
+
+            var validateFake = Substitute.For<IValidateBooking>();
+            validateFake.Validate(booking);
+
+            var dbAccessCategoriesFake = Substitute.For<ICategoriesDBAccess>();
+            dbAccessCategoriesFake.GetCategoryById(booking.Category.Id).Returns(booking.Category);
+
+            var dbAccessBranchFake = Substitute.For<IBranchesDBAccess>();
+            dbAccessBranchFake.GetBranchById(booking.BranchGet.Id).Returns(booking.BranchGet);
+            dbAccessBranchFake.GetBranchById(booking.BranchReturn.Id).Returns(booking.BranchReturn);
+
+            var dbAccessUserFake = Substitute.For<IUserDBAccess>();
+            dbAccessUserFake.GetUserByIdThenInclude(booking.User.Id).Returns(booking.User);
+
+            List<Extraa> extras = new();
+            extras.Add(booking.BookExtra[0].Extra);
+            var dbAccessExtrasFake = Substitute.For<IExtraDBAccess>();
+            dbAccessExtrasFake.GetExtraDB(booking).Returns(extras);
+
+            var dbAccessBookingFake = Substitute.For<IBookingDBAccess>();
+            dbAccessBookingFake.AddNewBook(booking);
+
+            BookingService bookingService = new(dbAccessBookingFake, validateFake, null, dbAccessCategoriesFake, 
+                dbAccessBranchFake, dbAccessUserFake, dbAccessExtrasFake);
+
+            bookingService.InsertNewBook(booking);
+
+            dbAccessBookingFake.Received().AddNewBook(Arg.Is<Booking>(book => book.Code.Length == 6 
+            && CheckIfCharIsLetterOrDigit(book.Code) == true));
+
+        }
+
+        private bool CheckIfCharIsLetterOrDigit(string code)
+        {
+            foreach(char c in code)
+            {
+                if (!char.IsLetterOrDigit(c))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
         [Fact]
         public void TesteBlabla()
