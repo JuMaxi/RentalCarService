@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Newtonsoft.Json.Bson;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReceivedExtensions;
@@ -457,6 +458,107 @@ namespace RentarlCars.Tests.Services
             bookingService.InsertNewBook(booking);
 
             dbAccessBookingFake.Received().AddNewBook(Arg.Is<Booking>(b => b.ValueToPay == 220));
+        }
+
+        [Fact]
+        public void When_two_booking_are_the_same_value_to_pay_should_be_equal()
+        {
+            Booking booking1 = new()
+            {
+                StartDay = DateTime.Now,
+                ReturnDay = DateTime.Now.AddDays(2),
+                Category = new()
+                {
+                    Id = 1, 
+                    PriceBands = new()
+                    {
+                        new()
+                        {
+                            MinDays = 1, 
+                            MaxDays = 2, 
+                            Price = 100
+                        }
+                    }
+                },
+                BranchGet = new() { Id = 1},
+                BranchReturn = new() { Id = 2},
+                User = new() { Id = 4},
+                BookExtra = new()
+                {
+                    new()
+                    {
+                        Extra = new()
+                        {
+                            Id = 2, 
+                            DayCost = 10
+                        }
+                    }
+                }
+            };
+            Booking booking2 = new()
+            {
+                StartDay = DateTime.Now,
+                ReturnDay = DateTime.Now.AddDays(2),
+                Category = new()
+                {
+                    Id = 1,
+                    PriceBands = new()
+                    {
+                        new()
+                        {
+                            MinDays = 1,
+                            MaxDays = 2,
+                            Price = 100
+                        }
+                    }
+                },
+                BranchGet = new() { Id = 1 },
+                BranchReturn = new() { Id = 2 },
+                User = new() { Id = 3 },
+                BookExtra = new()
+                {
+                    new()
+                    {
+                        Extra = new()
+                        {
+                            Id = 2,
+                            DayCost = 10
+                        }
+                    }
+                }
+            };
+
+            var validateFake = Substitute.For<IValidateBooking>();
+
+            var dbAccessCategoriesFake = Substitute.For<ICategoriesDBAccess>();
+            dbAccessCategoriesFake.GetCategoryById(booking1.Category.Id).Returns(booking1.Category);
+            dbAccessCategoriesFake.GetCategoryById(booking2.Category.Id).Returns(booking2.Category);
+
+            var dbAccessBranchesFake = Substitute.For<IBranchesDBAccess>();
+            dbAccessBranchesFake.GetBranchById(booking1.BranchGet.Id).Returns(booking1.BranchGet);
+            dbAccessBranchesFake.GetBranchById(booking2.BranchGet.Id).Returns(booking2.BranchGet);
+            dbAccessBranchesFake.GetBranchById(booking1.BranchReturn.Id).Returns(booking1.BranchReturn);
+            dbAccessBranchesFake.GetBranchById(booking2.BranchReturn.Id).Returns(booking2.BranchReturn);
+
+            var dbAccessUserFake = Substitute.For<IUserDBAccess>();
+            dbAccessUserFake.GetUserByIdThenInclude(booking1.User.Id).Returns(booking1.User);
+            dbAccessUserFake.GetUserByIdThenInclude(booking2.User.Id).Returns(booking2.User);
+
+            List<Extraa> list1 = new() { booking1.BookExtra[0].Extra };
+            List<Extraa> list2 = new() { booking2.BookExtra[0].Extra };
+            var dbAccessExtraFake = Substitute.For<IExtraDBAccess>();
+            dbAccessExtraFake.GetExtraDB(booking1).Returns(list1);
+            dbAccessExtraFake.GetExtraDB(booking2).Returns(list2);
+
+            var dbAccessBookingFake = Substitute.For<IBookingDBAccess>();
+
+            BookingService bookingService = new(dbAccessBookingFake, validateFake, null, dbAccessCategoriesFake,
+                dbAccessBranchesFake, dbAccessUserFake, dbAccessExtraFake);
+
+            bookingService.InsertNewBook(booking1);
+            bookingService.InsertNewBook(booking2);
+
+            booking1.ValueToPay.Should().Be(booking2.ValueToPay);
         }
 
 
